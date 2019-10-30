@@ -7,10 +7,12 @@
         <title>426 Final Project (W.I.P)</title>
 
         <link rel="stylesheet" href="customstyle.css" />
+        <!-- I assume we will end up using Bulma as well, so we add it here-->
     </head>
     <body>
         <div id="root">
-            <div id="mockup-para">
+            <li><a href="https://github.com/carolinepar/comp426Project">Github repo: https://github.com/carolinepar/comp426Project</a></li>
+            <div id="mockup-para1">
                 <p>Our project has a few core elements. By logging in using the 426 backend provided to us,
                     you will be able to add your favorite sports teams to the web page (akin to ESPN but with more
                     flexibility). From that point, each team will be stored in it's own tile. These tiles will be able to
@@ -22,7 +24,37 @@
             <div id="login">
                 <!-- I assume we will be adding these next few divs using jquery in whatever scripts we write
                 but I just added them here for the purposes of the mockup -->
-
+                <h4 style="margin:10px">Login</h4>
+                <form style="margin:10px">
+                    <input type="text" value="username" /><br>
+                    <input type="text" value="password" /><br>
+                    <button type="submit">Submit</button><button type="cancel">Cancel</button>
+                </form>
+            </div>
+            <div id="create-account">
+                <h4 style="margin:10px">Create Account</h4>
+                <form style="margin:10px">
+                        <input type="text" value="email" /><br>
+                        <input type="text" value="username" /><br>
+                        <input type="text" value="password" /><br>
+                        <input type="text" value="confirm password" /><br>
+                        <button type="submit">Submit</button><button type="cancel">Cancel</button>
+                    </form>
+            </div>
+            <div id="mockup-para2">
+                <p>
+                    After logging in, the user would see something like the following
+                </p>
+            </div>
+            <div id="mockup-tile">
+                <h1>Chicago Bulls (Image here)</h1>
+                <p>We would add team colors to the tile</p>
+                <p>These tiles will be draggable and resizable anywhere on the page</p>
+                <h3>Schedule</h3>
+                <h3>Standings</h3>
+                <h3>News</h3>
+                <p>All above sections can be added or deleted with:</p>
+                <button type="submit">Edit Team Tile</button> 
             </div>
         </div>
 

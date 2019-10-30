@@ -1,4 +1,22 @@
-.login {
-    width: 100px;
-    height: 100px;
+#login {
+    width: 200px;
+    height: 110px;
+    border-style: solid;
+    border-width: thin;
+    /* margin: auto; */
+}
+
+#create-account {
+    width: 200px;
+    height: 155px;
+    border-style: solid;
+    border-width: thin;
+    /* margin: auto; */
+}
+
+#mockup-tile {
+    width: 400px;
+    height: 400px;
+    border-style: solid;
+    border-width: thin;
 }
