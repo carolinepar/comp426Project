@@ -6,14 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/carolinepar/comp426Project.git"
-  },
-  "authors": "Caroline Parslow and Sam Auld",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/carolinepar/comp426Project/issues"
-  },
-  "homepage": "https://github.com/carolinepar/comp426Project#readme"
+  "author": "",
+  "license": "ISC"
 }
