@@ -1,4 +1,3 @@
-
 <!--how to use an api website: https://rapidapi.com/blog/how-to-use-an-api/-->
 <!DOCTYPE html>
 <html lang="en">
@@ -66,12 +65,12 @@
                             <br>
                             <label class="label">Enter Username</label>
                             <div class="control">
-                                <input class="input" type="text" placeholder="Username">
+                                <input class="input" type="text" placeholder="Username" id="registerUsername">
                             </div>
                             <br>
                             <label class="label">Enter Password</label>
                             <div class="control">
-                                <input class="input" type="text" placeholder="Password">
+                                <input class="input" type="text" placeholder="Password" id="registerPassword">
                             </div>
                             <p class="help">Password must contain 8 characters</p>
                             <br>
@@ -81,7 +80,7 @@
                             </div>
                             <br>
                             <div class="control">
-                                <button id="signupSubmit" class="button is-info">Create Account</button>
+                                <button id="registerSubmit" class="button is-info">Create Account</button>
                             </div>
                         </form>
                         </div>
@@ -97,7 +96,7 @@
         </div><!--end conent-->
         <script src="node_modules/axios/dist/axios.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-        <script src="login.js"></script>
+        <script src="login.js" type="module"></script>
 
     </body>
 </html>

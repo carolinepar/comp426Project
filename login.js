@@ -1,74 +1,65 @@
-import Axios from "axios";
 
 
+function userRegister(e){
+  alert('yeet');
 
-function loginFormSubmit() {
+  let username = document.getElementById('registerUsername').value;
+  let password = document.getElementById('registerPassword').value;
 
-}
-
-let handleloginSubmitButton = function () {
-    const $loginForm = $('#loginForm');
-    username = document.getElementById('loginUsername').value;
-    password = document.getElementById('loginPassword').value;
+  axios.post('http://localhost:3000/account/create', {
+    name: username,
+    pass: password,
     
-
+  })
+  .then(function(response) {
+    alert('Your account has been created');
+  })
+  .catch(function(error) {
+    //TODO: set an if statement to catch diff kinds of errors... rn this is 401 -- maybe not since it displays message instead
+    
+    getError(error);
+  })
+  e.preventDefault();
 
 }
 
-async function createAccount() {
-    const result = await Axios({
-        method: post,
-        name: username,
-        pass: password
-        //do we need withCredentials?
-    }
-}
-       
+function userLogin(event){
+  let username = document.getElementById('loginUsername').value;
+  let password = document.getElementById('loginPassword').value;
 
+  //TODO: set those boxes to '' after if it doen't already do taht
+ axios.post('http://localhost:3000/account/login', {
+    name: username,
+    pass: password,
+    
+  })
+  .then(function() {
+    alert('Successfully logged in');
+  })
+  .catch(function(error) {
+    //TODO: set an if statement to catch diff kinds of errors... rn this is 401
+    getError(error);
+  })
+  event.preventDefault();
+
+}
+
+function getError(error) {
+  //TODO: change this to html added to dom rather than alert
+  alert("Error: " + error.response.data['msg']);
+
+}
 
 
 
 $(function() {
+    
+    //////////const $signupForm = $('#signupForm');
+    //////////const $root = $('#content');
 
-
-    const pubRoot = new axios.create({
-        baseURL: "http://localhost:3000/account"
-      });
-      
-
-    const $signupForm = $('#signupForm');
-    const $root = $('#content');
-
-    $("#content").on('click', `#loginSubmit`, handleloginSubmitButton);
+   /////////// $("#content").on('click', `#loginSubmit`, handleloginSubmitButton);
  
     
-    
-    
-    
-    
-    /*const $message = $('#message');
-  
-    $form.submit(function(e) {
-      e.preventDefault();
-  
-      $message.html('');
-  
-      const data = $form.serializeArray().reduce((o, x) => {
-        o[x.name] = x.value;
-        return o;
-      }, {});
-      
-      $.ajax({
-        url: 'https://comp426fa19.cs.unc.edu/sessions/login',
-        type: 'POST',
-        data,
-        xhrFields: {
-            withCredentials: true,
-        },
-      }).then(() => {
-        $message.html('<span class="has-text-success">Success! You are now logged in.</span>');
-      }).catch(() => {
-        $message.html('<span class="has-text-danger">Something went wrong and you were not logged in. Check your email and password and your internet connection.</span>');
-      });
-    });*/
+  document.getElementById('registerSubmit').addEventListener('click', userRegister);
+  document.getElementById('loginSubmit').addEventListener('click', userLogin);
   });
