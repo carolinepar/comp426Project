@@ -1,7 +1,6 @@
 
 
-function userRegister(e){
-  alert('yeet');
+function userRegister(event){
 
   let username = document.getElementById('registerUsername').value;
   let password = document.getElementById('registerPassword').value;
@@ -9,17 +8,26 @@ function userRegister(e){
   axios.post('http://localhost:3000/account/create', {
     name: username,
     pass: password,
-    
+    data: {
+      "createdThreads": [],
+      "favoriteThreads": []
+    }
   })
   .then(function(response) {
-    alert('Your account has been created');
-  })
+    alert("redirecting...");
+    //TODO: redirect
+    ///doens't work -- refreshes page -- but we're just gonna redirect the website anyway so no problem
+   //let responseDiv = document.getElementById('response');
+    //responseDiv.innerHTML = `<div class="message is-success" style="padding: 20px;"><p>Success: Account has been created</p></div>`;
+})
   .catch(function(error) {
     //TODO: set an if statement to catch diff kinds of errors... rn this is 401 -- maybe not since it displays message instead
-    
-    getError(error);
+    let responseDiv = document.getElementById('response');
+  responseDiv.innerHTML = `<div class="message is-danger" style="padding: 20px;"><p>Error: ${error.response.data['msg']}</p></div>`;
+
+    //getError(error);
   })
-  e.preventDefault();
+  event.preventDefault();
 
 }
 
@@ -27,28 +35,26 @@ function userLogin(event){
   let username = document.getElementById('loginUsername').value;
   let password = document.getElementById('loginPassword').value;
 
-  //TODO: set those boxes to '' after if it doen't already do taht
  axios.post('http://localhost:3000/account/login', {
     name: username,
     pass: password,
     
   })
-  .then(function() {
-    alert('Successfully logged in');
-  })
+  .then(function(response) {
+    alert("Redirecting...");
+    //TODO: Redirect
+    //let responseDiv = document.getElementById('response');
+    //responseDiv.innerHTML = `<div class="message is-success" style="padding: 20px;"><p>Success: Account has been created</p></div>`;
+})
   .catch(function(error) {
-    //TODO: set an if statement to catch diff kinds of errors... rn this is 401
-    getError(error);
+    //TODO: set an if statement to catch diff kinds of errors... rn this is 401 -- maybe not since it displays message instead
+    let responseDiv = document.getElementById('response');
+    responseDiv.innerHTML = `<div class="message is-danger" style="padding: 20px;"><p>Error: ${error.response.data['msg']}</p></div>`;
   })
   event.preventDefault();
 
 }
 
-function getError(error) {
-  //TODO: change this to html added to dom rather than alert
-  alert("Error: " + error.response.data['msg']);
-
-}
 
 
 
