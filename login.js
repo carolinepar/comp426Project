@@ -16,8 +16,7 @@ function userRegister(event){
   .then(function(response) {
     window.location.replace("home.html");
     
-    //TODO: redirect
-   //let responseDiv = document.getElementById('response');
+    //let responseDiv = document.getElementById('response');
     //responseDiv.innerHTML = `<div class="message is-success" style="padding: 20px;"><p>Success: Account has been created</p></div>`;
 })
   .catch(function(error) {
@@ -42,6 +41,10 @@ function userLogin(event){
   })
   .then(function(response) {
     window.location.replace("home.html");
+    let responseValues = Object.values(response);
+    console.log(responseValues[0]['jwt']);
+    localStorage.setItem('jwt', responseValues[0]['jwt']);
+
     //TODO: Redirect
     //let responseDiv = document.getElementById('response');
     //responseDiv.innerHTML = `<div class="message is-success" style="padding: 20px;"><p>Success: Account has been created</p></div>`;

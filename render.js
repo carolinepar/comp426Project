@@ -197,11 +197,11 @@ export const handleNewThreadButton = function(event) {
             <div class="box" style="margin-left:6%; margin-right:6%; background-color:#209CEE;">
                 <div class="field">
                     <div class="control">
-                        <input class="input" type="text" placeholder="Title">
+                        <input class="input" type="text" id="newPostTitle" placeholder="Title">
                     </div>
                     <br>
                     <div class="control">
-                        <textarea class="textarea" placeholder="Text"></textarea>
+                        <textarea class="textarea" id="newPostBody" placeholder="Text"></textarea>
                     </div>
                 </div>
                 <button class="button send-new-thread-button">Send</button>
@@ -223,10 +223,31 @@ export const handleReplySendButtonEvent = function(event) {
 export const handleSendNewThreadButton = function(event) {
     event.preventDefault();
 
-    alert("sending new thread to the datastore")
-    //TODO
-    //make axios call to add the new thread to the datastore
-    renderSite();
+    let title = document.getElementById("newPostTitle").value;
+    let body = document.getElementById("newPostBody").value;
+    let postID = "3";
+    let url = 'http://localhost:3000/private/threads/' + postID;
+
+    let jwt = localStorage.getItem('jwt');
+    
+    axios.post(url, {
+        data: {
+          "title": title,
+          "body": body
+        } 
+    },
+    {
+        headers: { Authorization: `Bearer ${jwt}`}
+    }).then(function(response) {
+        console.log("thread stored in privateStore");
+        //go to post page once posted   
+    }).catch(function(error) {
+        //post doesn't get sent to dataStore
+        //what errors could there be (no title? no body?)
+        alert("error hit");
+    });
+
+    //renderSite();
 }
 
 export const handleFavoriteButtonEvent = function(event) {
