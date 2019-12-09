@@ -1,4 +1,3 @@
-<!--google login api: https://developers.google.com/identity/sign-in/web-->
 <!--how to use an api website: https://rapidapi.com/blog/how-to-use-an-api/-->
 <!DOCTYPE html>
 <html lang="en">
@@ -9,81 +8,99 @@
         <title>426Sports</title>
  
         <!-- Include links to CSS stylesheets below -->
-        <link rel="stylesheet" href="../customstyle.css"/>
+        <link rel="stylesheet" href="customstyle.css"/>
         <link rel="stylesheet" href="node_modules/bulma/css/bulma.css"/>
     </head>
     <body>
-        <section class="hero is-info is-bold">
-            <div class="hero-body">
-                <div class="container">
-                    <h1 class="title">426Sports</h1>
-                    <h2 class="subtitle">For all your sporting discussions</h2>
-                </div>
-            </div>
-        </section>
-        <section class="section">
-            <p class="content is-large" style="margin-left:8%; margin-right:8%;">Welcome to 426Sports! Feel free to choose your favorite leagues and discuss with other passionate
-                fans. Please login, create an account, or continue as a guest.
-            </p>
-        </section>
-        <section class="section" id="login-forms">
-            <div class="tile is-ancestor">
-                <div class="tile is-1"></div>
-                <div class="tile is-5 box">
-                    <div class="field">
-                        <h1 class="title">Login</h1>
-                        <label class="label">Enter Username</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Username">
-                        </div>
-                        <br>
-                        <label class="label">Enter Password</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Password">
-                        </div>
-                        <br>
-                        <div class="control">
-                            <button class="button is-info">Login</button>
-                        </div>
-                   </div>
-                </div>
-                <div class="tile is-5 box">
-                    <div class="field">
-                        <h1 class="title">Create Account</h1>
-                        <!-- <label class="label">Enter Email</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="example123@email.com">
-                        </div>
-                        <br> -->
-                        <label class="label">Enter Username</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Username">
-                        </div>
-                        <br>
-                        <label class="label">Enter Password</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Password">
-                        </div>
-                        <!-- <p class="help">Password must contain 8 characters</p> -->
-                        <!-- <br>
-                        <label class="label">Re-enter Password</label>
-                        <div class="control">
-                            <input class="input" type="text" placeholder="Password">
-                        </div> -->
-                        <br>
-                        <div class="control">
-                            <button class="button is-info">Create Account</button>
-                        </div>
+
+        <div id="content">
+
+                
+
+            <section class="hero is-info is-bold">
+                <div class="hero-body">
+                    <div class="container">
+                        <h1 class="title">426Sports</h1>
+                        <h2 class="subtitle">For all your sporting discussions</h2>
                     </div>
                 </div>
-                <div class="tile is-1"></div>
-            </div>
-        </section>
-        <section>
-            <!--is a guest button feasible?-->
-            <div class="control" style="text-align:center; margin-bottom:50px;">
-                    <button class="button is-info">Continue as guest</button>
-            </div>
-        </section>
+            </section>
+
+            
+
+            <section class="section">
+                <p class="content is-large" style="margin-left:8%; margin-right:8%;">Welcome to 426Sports! Feel free to choose your favorite leagues and discuss with other passionate
+                    fans. Please login, create an account, or continue as a guest.
+                </p>
+            </section>
+
+            <div id="response">
+
+
+            </div><!--end response-->
+
+            <section class="section" id="login-forms">
+                <div class="tile is-ancestor">
+                    <div class="tile is-1"></div>
+                    <div class="tile is-5 box" id="formDiv">
+                        
+                        <div class="field">
+                            <form id="loginForm">
+                                <h1 class="title">Login</h1>
+                                <label class="label">Enter Username</label>
+                                <div class="control">
+                                    <input id="loginUsername" class="input" type="text" placeholder="Username">
+                                </div>
+                                <br>
+                                <label class="label">Enter Password</label>
+                                <div class="control">
+                                    <input id="loginPassword" class="input" type="text" placeholder="Password">
+                                </div>
+                                <br>
+                                <div class="control">
+                                     <!--   <button id="loginSubmit" class="button is-info">Login</button>-->
+                                
+                                    <button id="loginSubmit" class="button is-info" type="button">Login</button>
+                                </div>
+                            </form>
+                        </div>
+                                    
+                    </div>
+                    <div class="tile is-5 box">
+                        <div class="field">
+                            <form id="signupForm">
+                            <h1 class="title">Create Account</h1>
+                            
+                            <label class="label">Enter Username</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="Username" id="registerUsername">
+                            </div>
+                            <br>
+                            <label class="label">Enter Password</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="Password" id="registerPassword">
+                            </div>
+                            <br>
+                            <div class="control">
+                                <button id="registerSubmit" class="button is-info" type="button">Create Account</button>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                    <div class="tile is-1"></div>
+                </div>
+            </section>
+            <section>
+                <div class="control" style="text-align:center; margin-bottom:50px;">
+                        <button class="button is-info">Continue as guest</button>
+                </div>
+            </section>
+
+            
+        </div><!--end content-->
+        <script src="node_modules/axios/dist/axios.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="login.js" type="module"></script>
+
     </body>
 </html>
