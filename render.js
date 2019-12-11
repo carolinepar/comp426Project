@@ -40,10 +40,13 @@ export async function renderFeed() {
         headers: { Authorization: `Bearer ${jwt}`}
         }).then(function(response) {
             let threads = response.data.result;
+            console.log(threads);
+            
             let IDs = [];
             for(let i in threads) {
                 IDs.push(i);
             }
+            console.log(IDs);
 
             for(let i = 0; i < IDs.length; i++) {
                 // console.log(threads[IDs[i]]['title']);
@@ -53,7 +56,7 @@ export async function renderFeed() {
                 $threads.append(`
                     <div class="box" id="${IDs[i]}">
                         <h3 class="title is-4">${threads[IDs[i]]['title']}</h3>
-                        <h3 class="subtitle is-6">Author Name Placeholder &emsp; <strong>Sport Placeholder</strong></h5>
+                        <h3 class="subtitle is-6">${threads[IDs[i]]['author']} &emsp; <strong>Sport Placeholder</strong></h5>
                         <button class="button view-button">View</button>
                     </div>
                 `);
@@ -216,7 +219,7 @@ export const renderPost = async function() {
         <div>
             <h1 class="title is-3" id="threadTitle">${result['title']}</h1>
             <div class="box" style="margin-left: 5%; margin-right:5%;">
-                <h1 class="title is-4">Author Name</h1>
+                <h1 class="title is-4">${result['author']}</h1>
                 <p>${result['body']}</p>    
             </div>
             <div id="commentFeed" class="box" style="background-color: #209CEE; margin-left: 5%; margin-right:5%;">
@@ -349,7 +352,7 @@ export const handleNewThreadButton = function(event) {
             <div class="box" style="margin-left:6%; margin-right:6%; background-color:#209CEE;">
                 <div class="field">
                     <div class="control">
-                        <input class="input" type="text" id="newPostTitle" placeholder="Title">
+                        <input class="input" type="text" id="newPostTitle" placeholder="Title" autocomplete="off"/>
                     </div>
                     <br>
                     <div class="control">
@@ -383,11 +386,14 @@ export const handleSendNewThreadButton = function(event) {
     let url = 'http://localhost:3000/private/threads/' + postID;
 
     let jwt = localStorage.getItem('jwt');
+    let user = localStorage.getItem('loggedInUser');
     
     axios.post(url, {
         data: {
           "title": title,
-          "body": body
+          "body": body,
+          "author": user,
+          "sportTag": "sports"
         } 
     },
     {
