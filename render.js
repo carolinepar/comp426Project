@@ -15,9 +15,12 @@ export const renderSite = function() {
         <div class="box" style="background-color: #209CEE;">
             <h1 class="title" style="color:white; display:inline-block;">Threads</h1><button class="button is-rounded is-light new-thread-button" style="float:right">Post New Thread</button>
             <div>
-                <div class="control">
-                        <input class="input" type="text" placeholder="Search threads">
-                </div>
+                <form autocomplete="off">
+                    <div class="control search">
+                            <input class="input" type="text" placeholder="Search threads" name="mySearch" id="searchThread">
+                    </div>
+                    <button type="button" id="submitSearch">Submit</button>
+                </form>
             </div>
             <br>
             <div id="threadFeed">
@@ -32,6 +35,184 @@ export const renderSite = function() {
     `);
     renderFeed();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const autocomplete = async function(searchBar, options) {
+    let currentFocus;
+
+
+    searchBar.addEventListener("input", debounce(function(e){
+        let val = this.value;
+        let a;
+        let b;
+        let i;
+        closeAllLists();
+        if(!val) {
+            return false;
+        }
+        currentFocus = -1;
+
+        a = document.createElement("div");
+        a.setAttribute('id',this.id + 'autocompleteItems');
+        a.setAttribute("class", "autocompleteItems");
+        this.parentNode.appendChild(a);
+        for(i = 0; i < options.length; i++) {
+            if(options[i].substr(0,val.length).toUpperCase() == val.toUpperCase()) {
+                b = document.createElement('div');
+                b.innerHTML = "<strong>" + options[i].substr(0, val.length) + "</strong>";
+                b.innerHTML += options[i].substr(val.length);
+                b.innerHTML += "<input type='hidden' value='" + options[i] + "'>";
+                b.addEventListener("click", function(e) {
+                    searchBar.value = this.getElementsByTagName("input")[0].value;
+                closeAllLists();
+            });
+            a.appendChild(b);
+          }
+        }
+    }, 125, false));
+
+
+
+
+/*execute a function presses a key on the keyboard:*/
+searchBar.addEventListener("keydown", function(e) {
+    var x = document.getElementById(this.id + "autocomplete-list");
+    if (x) x = x.getElementsByTagName("div");   //um?
+    if (e.keyCode == 40) {
+      /*If the arrow DOWN key is pressed,
+      increase the currentFocus variable:*/
+      currentFocus++;
+      /*and and make the current item more visible:*/
+      addActive(x);
+    } else if (e.keyCode == 38) { //up
+      /*If the arrow UP key is pressed,
+      decrease the currentFocus variable:*/
+      currentFocus--;
+      /*and and make the current item more visible:*/
+      addActive(x);
+    } else if (e.keyCode == 13) {
+      /*If the ENTER key is pressed, prevent the form from being submitted,*/
+      e.preventDefault();
+      if (currentFocus > -1) {
+        /*and simulate a click on the "active" item:*/
+        if (x) x[currentFocus].click();
+      }
+    }
+});
+function addActive(x) {
+  /*a function to classify an item as "active":*/
+  if (!x) return false;
+  /*start by removing the "active" class on all items:*/
+  removeActive(x);
+  if (currentFocus >= x.length) currentFocus = 0;
+  if (currentFocus < 0) currentFocus = (x.length - 1);
+  /*add class "autocomplete-active":*/
+  x[currentFocus].classList.add("autocomplete-active");
+}
+function removeActive(x) {
+  /*a function to remove the "active" class from all autocomplete items:*/
+  for (var i = 0; i < x.length; i++) {
+    x[i].classList.remove("autocomplete-active");
+  }
+}
+function closeAllLists(elmnt) {
+  /*close all autocomplete lists in the document,
+  except the one passed as an argument:*/
+  var x = document.getElementsByClassName("autocompleteItems");
+  console.log(x);
+  for (var i = 0; i < x.length; i++) {
+    if (elmnt != x[i] && elmnt != searchBar) {
+    x[i].parentNode.removeChild(x[i]);
+  }
+}
+}
+/*execute a function when someone clicks in the document:*/
+document.addEventListener("click", function (e) {
+  closeAllLists(e.target);
+});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function debounce(func, wait, immediate) {
+    var timeout;
+  
+    return function executedFunction() {
+      var context = this;
+      var args = arguments;
+          
+      var later = function() {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+  
+      var callNow = immediate && !timeout;
+      
+      clearTimeout(timeout);
+  
+      timeout = setTimeout(later, wait);
+      
+      if (callNow) func.apply(context, args);
+    };
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const renderPost = function() {
     const $root = $('#root');
@@ -224,8 +405,10 @@ export const handleSendNewThreadButton = function(event) {
     event.preventDefault();
 
     let title = document.getElementById("newPostTitle").value;
+    //this.threads[threads.length] = title;
+    //alert(threads);
     let body = document.getElementById("newPostBody").value;
-    let postID = "3";
+    let postID = new Date().getTime();
     let url = 'http://localhost:3000/private/threads/' + postID;
 
     let jwt = localStorage.getItem('jwt');
@@ -239,16 +422,64 @@ export const handleSendNewThreadButton = function(event) {
     {
         headers: { Authorization: `Bearer ${jwt}`}
     }).then(function(response) {
+         //threads.add(title);
         console.log("thread stored in privateStore");
         //go to post page once posted   
     }).catch(function(error) {
         //post doesn't get sent to dataStore
         //what errors could there be (no title? no body?)
-        alert("error hit");
+        alert(error.response.data['msg']);
     });
+
 
     //renderSite();
 }
+
+
+
+
+export const getTitles = async function(event) {
+    
+
+    let url = 'http://localhost:3000/private/threads';
+
+    let jwt = localStorage.getItem('jwt');
+    
+    let output = await axios.get(url,
+    {
+        headers: { Authorization: `Bearer ${jwt}`}
+    }).then(function(response) {
+         //threads.add(title);
+        // console.log("titles loaded");
+        // console.log(response.data.result);
+
+        let titles = {};
+        titles = response.data.result;
+        return titles;
+        // titles = r once posted   
+    }).catch(function(error) {
+        alert("error hit");
+
+
+        
+    });
+
+        let titles = output;
+        let counter = 0;
+
+        let temp = [];
+
+        for (let i in titles){
+                temp[counter] = titles[i]['title']
+            counter++;
+        }
+
+        return temp;
+}
+
+
+
+
 
 export const handleFavoriteButtonEvent = function(event) {
     event.preventDefault();
@@ -278,7 +509,7 @@ export const handleUnfavoriteButtonEvent = function(event) {
     //Update in the user datastore that this thread was unfavorited
 }
 
-$(function() {
+$( async function() {
     renderSite();
 
     const $root = $('#root');
@@ -298,4 +529,9 @@ $(function() {
     $root.on('click', '.favorite-button', handleFavoriteButtonEvent);
 
     $root.on('click', '.unfavorite-button', handleUnfavoriteButtonEvent);
+
+    let titles  = await getTitles();
+    autocomplete(document.getElementById("searchThread"), titles);
+
 });
+
