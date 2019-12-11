@@ -24,11 +24,6 @@ export const renderSite = function() {
             </div>
             <br>
             <div id="threadFeed">
-                <div class="box">
-                    <h3 class="title is-4">Post Title Placeholder</h3>
-                    <h3 class="subtitle is-6">Author Name Placeholder &emsp; <strong>Sport Placeholder</strong></h5>
-                    <button class="button view-button">View</button>
-                </div>
             </div>
         </div>
     </section>
@@ -36,29 +31,37 @@ export const renderSite = function() {
     renderFeed();
 }
 
+export async function renderFeed() {
+    const $threads = $('#threadFeed');
+    let jwt = localStorage.getItem('jwt');
+    let url = 'http://localhost:3000/private/threads';
 
+    axios.get(url, {
+        headers: { Authorization: `Bearer ${jwt}`}
+        }).then(function(response) {
+            let threads = response.data.result;
+            let IDs = [];
+            for(let i in threads) {
+                IDs.push(i);
+            }
 
+            for(let i = 0; i < IDs.length; i++) {
+                // console.log(threads[IDs[i]]['title']);
+                // console.log(threads[IDs[i]]['body']);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                //TODO: come back and add author name and sport tag to the post
+                $threads.append(`
+                    <div class="box">
+                        <h3 class="title is-4">${threads[IDs[i]]['title']}</h3>
+                        <h3 class="subtitle is-6">Author Name Placeholder &emsp; <strong>Sport Placeholder</strong></h5>
+                        <button class="button view-button">View</button>
+                    </div>
+                `);
+            }        
+        }).catch(function(error) {
+        alert(error + " hit when rendering threadFeed");
+    });  
+}
 
 export const autocomplete = async function(searchBar, options) {
     let currentFocus;
@@ -94,9 +97,6 @@ export const autocomplete = async function(searchBar, options) {
         }
     }, 125, false));
 
-
-
-
 /*execute a function presses a key on the keyboard:*/
 searchBar.addEventListener("keydown", function(e) {
     var x = document.getElementById(this.id + "autocomplete-list");
@@ -122,6 +122,7 @@ searchBar.addEventListener("keydown", function(e) {
       }
     }
 });
+
 function addActive(x) {
   /*a function to classify an item as "active":*/
   if (!x) return false;
@@ -132,12 +133,14 @@ function addActive(x) {
   /*add class "autocomplete-active":*/
   x[currentFocus].classList.add("autocomplete-active");
 }
+
 function removeActive(x) {
   /*a function to remove the "active" class from all autocomplete items:*/
   for (var i = 0; i < x.length; i++) {
     x[i].classList.remove("autocomplete-active");
   }
 }
+
 function closeAllLists(elmnt) {
   /*close all autocomplete lists in the document,
   except the one passed as an argument:*/
@@ -146,73 +149,37 @@ function closeAllLists(elmnt) {
   for (var i = 0; i < x.length; i++) {
     if (elmnt != x[i] && elmnt != searchBar) {
     x[i].parentNode.removeChild(x[i]);
-  }
 }
 }
+}
+
 /*execute a function when someone clicks in the document:*/
 document.addEventListener("click", function (e) {
   closeAllLists(e.target);
 });
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function debounce(func, wait, immediate) {
-    var timeout;
-  
-    return function executedFunction() {
-      var context = this;
-      var args = arguments;
-          
-      var later = function() {
-        timeout = null;
-        if (!immediate) func.apply(context, args);
-      };
-  
-      var callNow = immediate && !timeout;
-      
-      clearTimeout(timeout);
-  
-      timeout = setTimeout(later, wait);
-      
-      if (callNow) func.apply(context, args);
+var timeout;
+
+return function executedFunction() {
+    var context = this;
+    var args = arguments;
+        
+    var later = function() {
+    timeout = null;
+    if (!immediate) func.apply(context, args);
     };
-  };
 
+    var callNow = immediate && !timeout;
+    
+    clearTimeout(timeout);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    timeout = setTimeout(later, wait);
+    
+    if (callNow) func.apply(context, args);
+};
+};
 
 export const renderPost = function() {
     const $root = $('#root');
@@ -320,12 +287,6 @@ export const renderAccount = function() {
 
     //TODO
     //make render functions
-}
-
-export async function renderFeed() {
-    const $threads = $('#threadFeed');
-    //TODO
-    //make axios call to get all the threads, loop through and append to the threadFeed div
 }
 
 export async function renderComments() {
@@ -458,6 +419,7 @@ export const getTitles = async function(event) {
         return titles;
         // titles = r once posted   
     }).catch(function(error) {
+        //this throws an error when the private json is empty
         alert("error hit");
 
 
@@ -476,10 +438,6 @@ export const getTitles = async function(event) {
 
         return temp;
 }
-
-
-
-
 
 export const handleFavoriteButtonEvent = function(event) {
     event.preventDefault();
@@ -509,7 +467,7 @@ export const handleUnfavoriteButtonEvent = function(event) {
     //Update in the user datastore that this thread was unfavorited
 }
 
-$( async function() {
+$(async function() {
     renderSite();
 
     const $root = $('#root');
