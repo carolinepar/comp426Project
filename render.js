@@ -17,9 +17,10 @@ export const renderSite = function() {
             <div>
                 <form autocomplete="off">
                     <div class="control search">
-                            <input class="input" type="text" placeholder="Search threads" name="mySearch" id="searchThread">
-                    </div>
-                    <button type="button" id="submitSearch">Submit</button>
+                        <input class="input" type="text" placeholder="Search threads" name="mySearch" id="searchThread">
+                    </div> 
+                    <br>
+                    <button class="button is-rounded is-light" type="button" id="submitSearch">Submit</button>
                 </form>
             </div>
             <br>
@@ -50,7 +51,7 @@ export async function renderFeed() {
                 $threads.append(`
                     <div class="box" id="${IDs[i]}">
                         <h3 class="title is-4">${threads[IDs[i]]['title']}</h3>
-                        <h3 class="subtitle is-6">${threads[IDs[i]]['author']} &emsp; <strong>Sport Placeholder</strong></h5>
+                        <h3 class="subtitle is-6">${threads[IDs[i]]['author']} &emsp; <strong>${threads[IDs[i]]['sportTag']}</strong></h5>
                         <button class="button view-button">View</button>
                     </div>
                 `);
@@ -244,11 +245,8 @@ export async function renderComments() {
             for(let i in threads) {
                 IDs.push(i);
             }
-            //console.log(IDs);
-
-            //console.log(threads[IDs[0]]['parentID']);
+            
             let replyIDs = IDs.filter(reply => threads[reply]['parentID'] == parentID);
-            //console.log(replyIDs);
 
             for(let i = 0; i < replyIDs.length; i++) {
                 $comments.append(`
@@ -257,10 +255,7 @@ export async function renderComments() {
                         <p>${threads[replyIDs[i]]['reply']}</p>
                     </div>
                 `);
-            }
-
-
-           
+            } 
         }).catch(function(error) {
         alert(error + " hit when rendering commentFeed");
     });
@@ -371,6 +366,19 @@ export const handleNewThreadButton = function(event) {
                         <input class="input" type="text" id="newPostTitle" placeholder="Title" autocomplete="off"/>
                     </div>
                     <br>
+                    <div class="select">
+                        <select id="sportSelect">
+                            <option value="NFL">NFL</option>
+                            <option value="NBA">NBA</option>
+                            <option value="MLB">MLB</option>
+                            <option value="NHL">NHL</option>
+                            <option value="NCAAM">NCAAM</option>
+                            <option value="NCAAF">NCAAF</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <br>
+                    <br>
                     <div class="control">
                         <textarea class="textarea" id="newPostBody" placeholder="Text"></textarea>
                     </div>
@@ -401,22 +409,24 @@ export const handleReplySendButtonEvent = async function(event) {
     },
         {
             headers: { Authorization: `Bearer ${jwt}`}
-    });
+    }).then(function(response) {
+        //TODO: make a title and body required
 
-    renderPost();
-    //TODO: maybe make it so it doesn't reload at the top of the page
+        renderPost();
+        //TODO: maybe make it so it doesn't reload at the top of the page
+    }).catch(function(error) {
+        alert(error.response.data['msg']);
+    });
 }
 
 export const handleSendNewThreadButton = function(event) {
     event.preventDefault();
 
     let title = document.getElementById("newPostTitle").value;
-    //this.threads[threads.length] = title;
-    //alert(threads);
     let body = document.getElementById("newPostBody").value;
     let postID = new Date().getTime();
     let url = 'http://localhost:3000/private/threads/' + postID;
-
+    let sportTag = document.getElementById("sportSelect").value;
     let jwt = localStorage.getItem('jwt');
     let user = localStorage.getItem('loggedInUser');
     
@@ -425,27 +435,23 @@ export const handleSendNewThreadButton = function(event) {
           "title": title,
           "body": body,
           "author": user,
-          "sportTag": "sports"
+          "sportTag": sportTag
         } 
     },
     {
         headers: { Authorization: `Bearer ${jwt}`}
     }).then(function(response) {
-         //threads.add(title);
-        console.log("thread stored in privateStore");
-        //go to post page once posted   
+        //TODO: make it so a title, body are required
+        
+        
+        localStorage.setItem('currentViewingID', postID);
+        renderPost();
+
+        //TODO...maybe: have the new post show up at the top of the threadFeed right after it is made...probably do with a helper function
     }).catch(function(error) {
-        //post doesn't get sent to dataStore
-        //what errors could there be (no title? no body?)
         alert(error.response.data['msg']);
     });
-
-
-    //renderSite();
 }
-
-
-
 
 export const getTitles = async function(event) {
     
@@ -458,17 +464,11 @@ export const getTitles = async function(event) {
     {
         headers: { Authorization: `Bearer ${jwt}`}
     }).then(function(response) {
-         //threads.add(title);
-        // console.log("titles loaded");
-        // console.log(response.data.result);
-
         let titles = {};
         titles = response.data.result;
-        return titles;
-        // titles = r once posted   
+        return titles;   
     }).catch(function(error) {
-        //this throws an error when the private json is empty
-        alert("error hit");
+        alert(error + " hit when loading titles");
 
 
         
