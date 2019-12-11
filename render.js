@@ -40,19 +40,13 @@ export async function renderFeed() {
         headers: { Authorization: `Bearer ${jwt}`}
         }).then(function(response) {
             let threads = response.data.result;
-            console.log(threads);
             
             let IDs = [];
             for(let i in threads) {
                 IDs.push(i);
             }
-            console.log(IDs);
 
             for(let i = 0; i < IDs.length; i++) {
-                // console.log(threads[IDs[i]]['title']);
-                // console.log(threads[IDs[i]]['body']);
-
-                //TODO: come back and add author name and sport tag to the post
                 $threads.append(`
                     <div class="box" id="${IDs[i]}">
                         <h3 class="title is-4">${threads[IDs[i]]['title']}</h3>
@@ -190,7 +184,6 @@ export const renderPost = async function() {
 
     let jwt = localStorage.getItem('jwt');
     let viewingID = localStorage.getItem('currentViewingID');
-    console.log(viewingID);
     let url = 'http://localhost:3000/private/threads';
 
     let result = await axios.get(url, {
@@ -216,7 +209,7 @@ export const renderPost = async function() {
             <button class="button favorite-button" style="margin-left:5px;" id="favoriteButton">&#10084</button>
         </div>
         <br>
-        <div>
+        <div id=${viewingID}>
             <h1 class="title is-3" id="threadTitle">${result['title']}</h1>
             <div class="box" style="margin-left: 5%; margin-right:5%;">
                 <h1 class="title is-4">${result['author']}</h1>
@@ -224,17 +217,9 @@ export const renderPost = async function() {
             </div>
             <div id="commentFeed" class="box" style="background-color: #209CEE; margin-left: 5%; margin-right:5%;">
                 <h1 class="title is-4" style="color: white;">Replies</h1>
-                <div class="box">
-                    <h1 class="subtitle is-6">Commenter Name</h1>
-                    <p>Enim ut sem viverra aliquet eget sit amet. Etiam tempor orci eu lobortis elementum nibh tellus molestie. Lectus nulla at volutpat diam. Facilisis leo vel fringilla est ullamcorper eget nulla facilisi. Ridiculus mus mauris vitae ultricies. Arcu dui vivamus arcu felis bibendum ut tristique et egestas. Nascetur ridiculus mus mauris vitae ultricies leo integer. Cras ornare arcu dui vivamus arcu felis bibendum ut tristique. Ultricies lacus sed turpis tincidunt id aliquet risus. In tellus integer feugiat scelerisque varius morbi. Eget arcu dictum varius duis at consectetur lorem. At elementum eu facilisis sed odio. Nulla porttitor massa id neque aliquam vestibulum morbi. Turpis nunc eget lorem dolor. Felis bibendum ut tristique et egestas quis ipsum. Ridiculus mus mauris vitae ultricies leo. Risus viverra adipiscing at in tellus integer feugiat scelerisque varius. Massa tincidunt nunc pulvinar sapien et ligula. Congue nisi vitae suscipit tellus mauris a diam. Risus sed vulputate odio ut enim blandit volutpat.</p>
-                </div>
-                <div class="box">
-                    <h1 class="subtitle is-6">Commenter Name 2</h1>
-                    <p>Yes this post was very cool and informative. Very cool, proud of you, keep it up</p>
-                </div>
             </div>
             <div id="replyForm" class="control" style="margin-left: 5%; margin-right:5%;">
-                <textarea class="textarea" placeholder="Send a reply"></textarea>
+                <textarea class="textarea" placeholder="Send a reply" id="replyBox"></textarea>
                 <button class="button is-info reply-button" style="margin-top: 5px;">Send</button>
             </div>
         </div>
@@ -246,9 +231,40 @@ export const renderPost = async function() {
 
 export async function renderComments() {
     const $comments = $('#commentFeed');
-    //TODO
-    //make axios call to get all the threads, loop through and append to the threadFeed div
+    let jwt = localStorage.getItem('jwt');
+    let url = 'http://localhost:3000/private/comments';
+    let parentID = localStorage.getItem('currentViewingID');
+    
+    axios.get(url, {
+        headers: { Authorization: `Bearer ${jwt}`}
+        }).then(function(response) {
+            let threads = response.data.result;
+            
+            let IDs = [];
+            for(let i in threads) {
+                IDs.push(i);
+            }
+            //console.log(IDs);
 
+            //console.log(threads[IDs[0]]['parentID']);
+            let replyIDs = IDs.filter(reply => threads[reply]['parentID'] == parentID);
+            //console.log(replyIDs);
+
+            for(let i = 0; i < replyIDs.length; i++) {
+                $comments.append(`
+                    <div class="box">
+                        <h1 class="subtitle is-6">${threads[replyIDs[i]]['author']}</h1>
+                        <p>${threads[replyIDs[i]]['reply']}</p>
+                    </div>
+                `);
+            }
+
+
+           
+        }).catch(function(error) {
+        alert(error + " hit when rendering commentFeed");
+    });
+    //TODO: add some HTML for when there are no comments
 }
 
 export const renderAccount = function() {
@@ -366,13 +382,29 @@ export const handleNewThreadButton = function(event) {
     `);
 }
 
-export const handleReplySendButtonEvent = function(event) {
+export const handleReplySendButtonEvent = async function(event) {
     event.preventDefault();
+    
+    let jwt = localStorage.getItem('jwt');
+    let user = localStorage.getItem('loggedInUser');
+    let replyID = new Date().getTime(); 
+    let parentID = event.target.parentElement.parentElement.id; 
+    let reply = document.getElementById("replyBox").value;
+    let url = 'http://localhost:3000/private/comments/' + replyID;
 
-    alert("sending new reply to the datastore")
-    //TODO
-    //Handle sending a reply to a particular thread
-    renderSite();
+    axios.post(url, {
+        data: {
+            "parentID": parentID,
+            "reply": reply,
+            "author": user
+        }
+    },
+        {
+            headers: { Authorization: `Bearer ${jwt}`}
+    });
+
+    renderPost();
+    //TODO: maybe make it so it doesn't reload at the top of the page
 }
 
 export const handleSendNewThreadButton = function(event) {
