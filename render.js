@@ -51,7 +51,7 @@ export async function renderFeed() {
 
                 //TODO: come back and add author name and sport tag to the post
                 $threads.append(`
-                    <div class="box">
+                    <div class="box" id="${IDs[i]}">
                         <h3 class="title is-4">${threads[IDs[i]]['title']}</h3>
                         <h3 class="subtitle is-6">Author Name Placeholder &emsp; <strong>Sport Placeholder</strong></h5>
                         <button class="button view-button">View</button>
@@ -181,12 +181,23 @@ return function executedFunction() {
 };
 };
 
-export const renderPost = function() {
+export const renderPost = async function() {
     const $root = $('#root');
     $root.empty();
 
-    //TODO
-    //make axios call to get thread specific info
+    let jwt = localStorage.getItem('jwt');
+    let viewingID = localStorage.getItem('currentViewingID');
+    console.log(viewingID);
+    let url = 'http://localhost:3000/private/threads';
+
+    let result = await axios.get(url, {
+        headers: { Authorization: `Bearer ${jwt}`}
+        }).then(function(response) {
+            let currentPost = response.data.result[viewingID]
+            return currentPost;       
+        }).catch(function(error) {
+        alert(error + " hit when rendering post");
+    });
 
     $root.append(`
     <section class="hero is-info is-bold">
@@ -203,10 +214,10 @@ export const renderPost = function() {
         </div>
         <br>
         <div>
-            <h1 class="title is-3" id="threadTitle">Title Placeholder</h1>
+            <h1 class="title is-3" id="threadTitle">${result['title']}</h1>
             <div class="box" style="margin-left: 5%; margin-right:5%;">
                 <h1 class="title is-4">Author Name</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>${result['body']}</p>    
             </div>
             <div id="commentFeed" class="box" style="background-color: #209CEE; margin-left: 5%; margin-right:5%;">
                 <h1 class="title is-4" style="color: white;">Replies</h1>
@@ -227,8 +238,14 @@ export const renderPost = function() {
         <br>
     </section>
     `);
-
     renderComments();
+}
+
+export async function renderComments() {
+    const $comments = $('#commentFeed');
+    //TODO
+    //make axios call to get all the threads, loop through and append to the threadFeed div
+
 }
 
 export const renderAccount = function() {
@@ -289,16 +306,9 @@ export const renderAccount = function() {
     //make render functions
 }
 
-export async function renderComments() {
-    const $comments = $('#commentFeed');
-    //TODO
-    //make axios call to get all the threads, loop through and append to the threadFeed div
-
-}
-
 export const handleViewButtonEvent = function(event) {
     event.preventDefault();
-
+    localStorage.setItem('currentViewingID', event.target.parentElement.id);
     renderPost();
 }
 
