@@ -206,7 +206,7 @@ export const renderPost = async function() {
         </div>
     </section>
     <section>
-        <div class="field is-grouped" style="margin-left:4%; margin-top:15px;">
+        <div class="field is-grouped" style="margin-left:4%; margin-top:15px;" id="buttonControls">
             <button class="button back-button">Back</button>
             <button class="button favorite-button" style="margin-left:5px;" id="favoriteButton">&#10084</button>
         </div>
@@ -228,6 +228,36 @@ export const renderPost = async function() {
         <br>
     </section>
     `);
+
+    url = 'http://localhost:3000/user/likedPosts/' + viewingID;
+
+    let saveStatus = await axios.get(url, {
+        headers: { Authorization: `Bearer ${jwt}`}
+    }).then(function(response) {
+        const $button = $('#favoriteButton');
+
+        $button.css("color", "red");
+
+        $button.attr("class", "button unfavorite-button")
+        $button.attr("id", "unfavoriteButton")
+    }).catch(function(error) {
+        //This catch will encounter 404 errors, but this is by design  
+    });
+
+    url = 'http://localhost:3000/user/myPosts/' + viewingID;
+
+    let editStatus = await axios.get(url, {
+        headers: { Authorization: `Bearer ${jwt}`} 
+    }).then(function(response) {
+        const $buttons = $('#buttonControls');
+        $buttons.append(`
+        <button class="button edit-button is-info is-outlined" style="margin-left:5px;" id="editButton">Edit</button>
+        <button class="button delete-button is-danger" style="margin-left:5px;" id="deleteButton">Delete</button>
+        `)
+    }).catch(function(error) {
+        console.log(error)
+    });
+
     renderComments();
 }
 
@@ -362,25 +392,6 @@ export const renderAccount = async function() {
              }
         }
      }
-     
-
-    // let IDs = [];
-    // for(let i in threads) {
-    //     IDs.push(i);
-    // }
-    
-    //let replyIDs = IDs.filter(reply => threads[reply]['parentID'] == parentID);
-    // for(let i = 0; i < userThreads.length; i++) {
-    //     $favoriteFeed.append(`
-    //         <div class="box">
-    //             <h1 class="subtitle is-6"><strong>${threads[userThreads[i]]['title']}</strong></h1>
-    //             <p>${threads[userThreads[i]]['body']}</p>
-    //         </div>
-    //     `);
-    // } 
-
-    //TODO
-    //make render functions
 }
 
 export const renderSportsPage = function() {
@@ -426,13 +437,7 @@ export const renderSportsPage = function() {
     loadGames('nbaGames', 4387);
     //loadGames('mlbGames', 4424);
     loadGames('nhlGames', 4380);
-    //loadGames('ncaafGames', 4479);
-    
-    
-
-    
-
-    
+    //loadGames('ncaafGames', 4479); 
 }
 
 export const loadGames = async function(id, leagueID) {
@@ -558,8 +563,6 @@ export const handleReplySendButtonEvent = async function(event) {
         {
             headers: { Authorization: `Bearer ${jwt}`}
     }).then(function(response) {
-        //TODO: make a title and body required
-
         renderPost();
         //TODO: maybe make it so it doesn't reload at the top of the page
     }).catch(function(error) {
@@ -567,7 +570,7 @@ export const handleReplySendButtonEvent = async function(event) {
     });
 }
 
-export const handleSendNewThreadButton = function(event) {
+export const handleSendNewThreadButton = async function(event) {
     event.preventDefault();
 
     let title = document.getElementById("newPostTitle").value;
@@ -578,7 +581,7 @@ export const handleSendNewThreadButton = function(event) {
     let jwt = localStorage.getItem('jwt');
     let user = localStorage.getItem('loggedInUser');
     
-    axios.post(url, {
+    await axios.post(url, {
         data: {
           "title": title,
           "body": body,
@@ -588,20 +591,29 @@ export const handleSendNewThreadButton = function(event) {
     },
     {
         headers: { Authorization: `Bearer ${jwt}`}
-    }).then(function(response) {
-        //TODO: make it so a title, body are required
+    }).then(function(response) {            
+        localStorage.setItem('currentViewingID', postID);
         
-        
-         localStorage.setItem('currentViewingID', postID);
-        
-        event.preventDefault();
-
-        
-       renderPost();
+        event.preventDefault();     
+        renderPost();
 
         //TODO...maybe: have the new post show up at the top of the threadFeed right after it is made...probably do with a helper function
     }).catch(function(error) {
         alert(error.response.data['msg']);
+    });
+
+    url = 'http://localhost:3000/user/myPosts/' + postID;
+
+    await axios.post(url, {
+        data: body,
+        "type": "merge"
+    },
+    {
+        headers: { Authorization: `Bearer ${jwt}`},
+    }).then(function(response) {
+        console.log("adding post to user store");
+    }).catch(function(error) {
+        console.log(error + " when adding post to user store");
     });
 }
 
@@ -639,7 +651,7 @@ export const getTitles = async function(event) {
         return temp;
 }
 
-export const handleFavoriteButtonEvent = function(event) {
+export const handleFavoriteButtonEvent = async function(event) {
     event.preventDefault();
 
     const $button = $('#favoriteButton');
@@ -649,8 +661,22 @@ export const handleFavoriteButtonEvent = function(event) {
     $button.attr("class", "button unfavorite-button")
     $button.attr("id", "unfavoriteButton")
 
-    //TODO
-    //Update in the user datastore that this thread was favorited
+    let jwt = localStorage.getItem('jwt');
+    let viewing = localStorage.getItem('currentViewingID');
+    let url = 'http://localhost:3000/user/likedPosts/' + viewing;
+    
+
+    await axios.post(url, {
+        data: "thread saved",
+        "type": "merge"
+    },
+    {
+        headers: { Authorization: `Bearer ${jwt}`}
+    }).then(function(response) {
+        console.log("thread saved");
+    }).catch(function(error) {
+        alert(error + " when saving thread");
+    });
 }
 
 export const handleUnfavoriteButtonEvent = function(event) {
@@ -663,8 +689,11 @@ export const handleUnfavoriteButtonEvent = function(event) {
     $button.attr("class", "button favorite-button")
     $button.attr("id", "favoriteButton")
 
-    //TODO
-    //Update in the user datastore that this thread was unfavorited
+    let jwt = localStorage.getItem('jwt');
+    let viewing = localStorage.getItem('currentViewingID');
+    let url = 'http://localhost:3000/user/likedPosts/' + viewing;
+
+    axios.delete(url, {headers: { Authorization: `Bearer ${jwt}`}});
 }
 
 export const handleSportsButtonEvent = function(event) {
@@ -678,6 +707,7 @@ export const handleLogoutButtonEvent = function(event) {
 
     localStorage.removeItem('jwt');
     localStorage.removeItem('loggedInUser');
+    localStorage.setItem('currentViewingID', null);
 
     window.location.replace("index.html");
 }
@@ -729,6 +759,29 @@ export const handleSubmitSearchButton = async function(event) {
     });
 }
 
+export const handleEditButtonEvent = async function(event) {
+    event.preventDefault();
+
+    let viewing = localStorage.getItem('currentViewingID');
+    let url = 'http://localhost:3000/user/myPosts/' + viewing;
+    let jwt = localStorage.getItem('jwt');
+
+    await axios.post(url, {
+        headers: { Authorization: `Bearer ${jwt}`}
+    }, {
+        data: "edited"
+    }).then(function(response) {
+
+    }).catch(function(error) {
+
+    });
+
+}
+
+export const handleDeleteButtonEvent = function(event) {
+    event.preventDefault();
+}
+
 $(async function() {
 
 
@@ -737,22 +790,6 @@ $(async function() {
     } else {
         renderSite();
     }
-        
-        // const $root = $('#root');
-        
-        // $root.on('click', '.back-button', handleBackButtonEvent);
-
-        // $root.on('click', '.reply-button', handleReplySendButtonEvent);
-
-        // $root.on('click', '.favorite-button', handleFavoriteButtonEvent);
-
-        // $root.on('click', '.unfavorite-button', handleUnfavoriteButtonEvent);
-
-        // return;
-
-    
-
-    // renderSite();
 
     const $root = $('#root');
 
@@ -777,6 +814,10 @@ $(async function() {
     $root.on('click', '.logout-button', handleLogoutButtonEvent);
 
     $root.on('click', '.submit-search-button', handleSubmitSearchButton);
+
+    $root.on('click', '.edit-button', handleEditButtonEvent);
+
+    $root.on('click', '.delete-button', handleDeleteButtonEvent);
 
     let titles  = await getTitles();
 
