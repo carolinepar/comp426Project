@@ -57,10 +57,10 @@ function userLogin(event){
     console.log(responseValues[0]['jwt']);
     localStorage.setItem('jwt', responseValues[0]['jwt']);
     localStorage.setItem('loggedInUser', username);
+    localStorage.setItem('currentViewingID', null);
     
   })
   .catch(function(error) {
-  //TODO: set an if statement to catch diff kinds of errors... rn this is 401 -- maybe not since it displays message instead
   let responseDiv = document.getElementById('response');
   responseDiv.innerHTML = `<div class="message is-danger" style="padding: 20px;"><p>Error: ${error.response.data['msg']}</p></div>`;
 
@@ -89,7 +89,6 @@ function sendFeedback(event) {
     console.log(error);
   });
 }
-
 
 $(async function() {
   document.getElementById('registerSubmit').addEventListener('click', userRegister);

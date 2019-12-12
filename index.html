@@ -11,96 +11,87 @@
         <link rel="stylesheet" href="node_modules/bulma/css/bulma.css"/>
     </head>
     <body>
-
-
-                
-
-            <section class="hero is-info is-bold">
-                <div class="hero-body">
-                    <div class="container">
-                        <h1 class="title">426Sports</h1>
-                        <h2 class="subtitle">For all your sporting discussions</h2>
-                    </div>
+        <section class="hero is-info is-bold">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">426Sports</h1>
+                    <h2 class="subtitle">For all your sporting discussions</h2>
                 </div>
-            </section>
-
-            
-
-            <section class="section">
-                <p class="content is-large" style="margin-left:8%; margin-right:8%;">Welcome to 426Sports! Feel free to choose your favorite leagues and discuss with other passionate
-                    fans!
-                </p>
-            </section>
-
-            <div id="response">
-
-
             </div>
+        </section>
+        <section class="section">
+            <p class="content is-large" style="margin-left:8%; margin-right:8%;">Welcome to 426Sports! Feel free to choose your favorite leagues and discuss with other passionate
+                fans!
+            </p>
+        </section>
+        <div id="response">
 
-            <section class="section" id="login-forms">
-                <div class="tile is-ancestor">
-                    <div class="tile is-1"></div>
-                    <div class="tile is-5 box" id="formDiv">
-                        
-                        <div class="field">
-                            <form id="loginForm">
-                                <h1 class="title">Login</h1>
-                                <label class="label">Enter Username</label>
-                                <div class="control">
-                                    <input id="loginUsername" class="input" type="text" placeholder="Username" autocomplete="off"/>
-                                </div>
-                                <br>
-                                <label class="label">Enter Password</label>
-                                <div class="control">
-                                    <input id="loginPassword" class="input" type="password" placeholder="Password" autocomplete="off"/>
-                                </div>
-                                <br>
-                                <div class="control">                                
-                                    <button id="loginSubmit" class="button is-info" type="button">Login</button>
-                                </div>
-                            </form>
-                        </div>
-                                    
-                    </div>
-                    <div class="tile is-5 box">
-                        <div class="field">
-                            <form id="signupForm">
-                            <h1 class="title">Create Account</h1>
-                            
+
+        </div>
+        <section class="section" id="login-forms">
+            <div class="tile is-ancestor">
+                <div class="tile is-1"></div>
+                <div class="tile is-5 box" id="formDiv">
+                    
+                    <div class="field">
+                        <form id="loginForm">
+                            <h1 class="title">Login</h1>
                             <label class="label">Enter Username</label>
                             <div class="control">
-                                <input class="input" type="text" placeholder="Username" id="registerUsername" autocomplete="off"/>
+                                <input id="loginUsername" class="input" type="text" placeholder="Username" autocomplete="off"/>
                             </div>
                             <br>
                             <label class="label">Enter Password</label>
                             <div class="control">
-                                <input class="input" type="password" placeholder="Password" id="registerPassword" autocomplete="off"/>
+                                <input id="loginPassword" class="input" type="password" placeholder="Password" autocomplete="off"/>
                             </div>
                             <br>
-                            <label class="label">Enter Email</label>
-                            <div class="control">
-                                <input class="input" type="text" placeholder="example@email.com" id="registerEmail" autocomplete="off"/>
-                            </div>
-                            <br>
-                            <div class="control">
-                                <button id="registerSubmit" class="button is-info" type="button">Create Account</button>
+                            <div class="control">                                
+                                <button id="loginSubmit" class="button is-info" type="button">Login</button>
                             </div>
                         </form>
+                    </div>
+                                
+                </div>
+                <div class="tile is-5 box">
+                    <div class="field">
+                        <form id="signupForm">
+                        <h1 class="title">Create Account</h1>
+                        
+                        <label class="label">Enter Username</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="Username" id="registerUsername" autocomplete="off"/>
                         </div>
+                        <br>
+                        <label class="label">Enter Password</label>
+                        <div class="control">
+                            <input class="input" type="password" placeholder="Password" id="registerPassword" autocomplete="off"/>
+                        </div>
+                        <br>
+                        <label class="label">Enter Email</label>
+                        <div class="control">
+                            <input class="input" type="text" placeholder="example@email.com" id="registerEmail" autocomplete="off"/>
+                        </div>
+                        <br>
+                        <div class="control">
+                            <button id="registerSubmit" class="button is-info" type="button">Create Account</button>
+                        </div>
+                    </form>
                     </div>
-                    <div class="tile is-1"></div>
                 </div>
-            </section>
-            <section style="margin-left:10%; margin-right:10%">
-                <div>
-                    <h1 class="subtitle is-4">Leave us feedback</h1>
-                    <div id="feedbackForm" class="control">
-                        <textarea class="textarea" placeholder="Send feedback" id="feedbackBox"></textarea>
-                        <button class="button is-info feedback-button" style="margin-top: 5px;" id="feedbackSend">Send</button>
-                    </div>
+                <div class="tile is-1"></div>
+            </div>
+        </section>
+        <section style="margin-left:10%; margin-right:10%">
+            <div>
+                <h1 class="subtitle is-4">Leave us feedback</h1>
+                <div id="feedbackForm" class="control">
+                    <textarea class="textarea" placeholder="Send feedback" id="feedbackBox"></textarea>
+                    <button class="button is-info feedback-button" style="margin-top: 5px;" id="feedbackSend">Send</button>
                 </div>
-            </section>  
-            <br>          
+            </div>
+        </section>  
+        <br>          
         <script src="node_modules/axios/dist/axios.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="login.js" type="module"></script>

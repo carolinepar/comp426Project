@@ -58,7 +58,7 @@ export async function renderFeed() {
                 `);
             }        
         }).catch(function(error) {
-        alert(error + " hit when rendering threadFeed");
+        console.log(error + " hit when rendering threadFeed");
     });  
 }
 
@@ -202,7 +202,7 @@ console.log(viewingID);
             let currentPost = response.data.result[viewingID]
             return currentPost;       
         }).catch(function(error) {
-        alert(error + " hit when rendering post");
+            console.log(error + " hit when rendering post");
     });
 
     $root.append(`
@@ -221,9 +221,9 @@ console.log(viewingID);
         <br>
         <div id=${viewingID}>
         <h1 class="title is-3" id="threadTitle">${result['title']}</h1>
-        <div class="box" style="margin-left: 5%; margin-right:5%;">
+        <div class="box" style="margin-left: 5%; margin-right:5%;" id="postBox">
             <h1 class="title is-4">${result['author']}</h1>
-            <p>${result['body']}</p>    
+            <p id="bodyBox">${result['body']}</p>    
             </div>
             <div id="commentFeed" class="box" style="background-color: #209CEE; margin-left: 5%; margin-right:5%;">
                 <h1 class="title is-4" style="color: white;">Replies</h1>
@@ -296,9 +296,8 @@ export async function renderComments() {
                 `);
             } 
         }).catch(function(error) {
-        alert(error + " hit when rendering commentFeed");
+            console.log(error + " hit when rendering commentFeed");
     });
-    //TODO: add some HTML for when there are no comments
 }
 
 export const renderAccountFeed = function() {
@@ -318,7 +317,7 @@ export const renderAccountFeed = function() {
         <br>
         <br>
         <div style="margin-left: 5%; margin-top:5px;">
-            <h1 class="title">Account Name</h1>
+            <h1 class="title">Your Account</h1>
         </div>
         <br>
         <br>
@@ -349,133 +348,59 @@ export const renderAccountFeed = function() {
 export const renderAccount = async function() {
    
     renderAccountFeed();
-
-
-
-
     const $favoriteFeed = $('#SavedThreadsFeed');
     
     let user = localStorage.getItem('loggedInUser');
     let url = 'http://localhost:3000/user/likedPosts' ;
     let jwt = localStorage.getItem('jwt');
-    // let parentID = localStorage.getItem('currentViewingID');
-    
+     
     let threads = axios.get(url, {
         headers: { Authorization: `Bearer ${jwt}`}
         }).then(function(response) {
             let threads = response.data.result;
+            console.log(Object.keys(threads).length === 0 && threads.constructor === Object);
 
-            
+console.log(threads);
+
+            if(Object.keys(threads).length === 0 && threads.constructor === Object){
+                $favoriteFeed.empty();
+                $favoriteFeed.append(`
+                <h1 class="subtitle is-6"><strong>You haven't liked any posts</strong></h1>
+                `);
+            }else{
         
-
+                $favoriteFeed.empty();
             url = 'http://localhost:3000/private/threads' ;
 
             let allThreads = axios.get(url, {
                 headers: { Authorization: `Bearer ${jwt}`}
                 }).then(function(response) {
+                    
+
+
+         
                     let allThreads = response.data.result;
-                  let userThreads;
-                  let userTitles;
-                  let userBodies;
-
-
-                    // console.log(allThreads);
-
+                    let userThreads;
+                    let userTitles;
+                    let userBodies;
                     for (let i in allThreads) {
                         for (let c in threads) {
-
-
-
-
-
                             if(i === c){
-                                // userThreads[userThreads.length] = allThreads[i]['title'];
-                                // userThreads.push(i);
-                                // console.log(allThreads[i]['title']);
-                                // console.log(allThreads[i]['body']);
-
                                 $favoriteFeed.append(`
-
-                                        <div class="box" id="${i}">
+                                         <div class="box" id="${i}">
                                             <h1 class="subtitle is-6"><strong>${allThreads[i]['title']}</strong></h1>
                                             <p>${allThreads[i]['body']}</p><br>
                                             <button class="button view-button">View</button>
                                         </div>
                                     `);
-
-
-
-
-
-
-
-                            }
+                           }
                         }
-                        
-                        
-                        
-                        
-                        
-                                }
-                        
-                        
-                        
-                        
-                    //     for (let c = 0; c < threads.length; c++){
-                    //         if(i ===threads[c]){
-                    //             // userThreads[userThreads.length] = allThreads[i]['title'];
-                    //             // userThreads.push(i);
-                    //             // console.log(allThreads[i]['title']);
-                    //             // console.log(allThreads[i]['body']);
-
-                    //             $favoriteFeed.append(`
-
-                    //                     <div class="box" id="${i}">
-                    //                         <h1 class="subtitle is-6"><strong>${allThreads[i]['title']}</strong></h1>
-                    //                         <p>${allThreads[i]['body']}</p><br>
-                    //                         <button class="button view-button">View</button>
-                    //                     </div>
-                    //                 `);
-
-
-
-
-
-
-
-                    //         }
-                    //     }
-                    //   }
-
-                    
-
-                    // console.log(typeof(threads[0]));
-                
-                    // for (let i = 0; i < allThreads.length; i++){
-                    //     for (let c = 0; c < threads.length; c++) {
-                    //         if(allThreads[i] == threads[i]){
-                    //             userThreads.push(threads[i]);
-                    //          }
-                    //     }
-                    //  }
-                     
-
-
-
-
-
-
+                    }
                 }).catch(function(error) {
-                alert(error + " hit when rendering saved feeds");
-            });
-        
-
-
-
-
-
+                    console.log(error + " hit when rendering saved feeds");
+            });}
         }).catch(function(error) {
-        alert(error + " hit when rendering commentFeed");
+            console.log(error + " hit when rendering commentFeed");
     });
 
     const $createdThreads = $('#createdThreadsFeed');
@@ -487,8 +412,15 @@ export const renderAccount = async function() {
         }).then(function(response) {
             let threads = response.data.result;
 
-            
+            if (Object.keys(threads).length === 0 && threads.constructor === Object){
 
+                $createdThreads.empty();
+                $createdThreads.append(`
+                <h1 class="subtitle is-6"><strong>You haven't made any posts</strong></h1>
+                `);
+            } else {
+
+                $createdThreads.empty();
 
         url = 'http://localhost:3000/private/threads' ;
 
@@ -496,91 +428,25 @@ export const renderAccount = async function() {
             headers: { Authorization: `Bearer ${jwt}`}
             }).then(function(response) {
                 let allThreads = response.data.result;
-           
-
-
                 for (let i in allThreads) {
                     for (let c in threads) {
-
-                        
-                        // console.log(threads[c]);
-                        if(i === c){
-                            // console.log(i);
-                            // userThreads[userThreads.length] = allThreads[i]['title'];
-                            // userThreads.push(i);
-                            // console.log(allThreads[i]['title']);
-                            // console.log(allThreads[i]['body']);
-
-                            $createdThreads.append(`
-
-                                    <div class="box" id="${i}">
-                                        <h1 class="subtitle is-6"><strong>${allThreads[i]['title']}</strong></h1>
-                                        <p>${allThreads[i]['body']}</p><br>
-                                        <button class="button view-button">View</button>
-                                    </div>
-                                `);
-
-
-
-
-
-
-
+                       if(i === c){
+                             $createdThreads.append(`
+                                <div class="box" id="${i}">
+                                    <h1 class="subtitle is-6"><strong>${allThreads[i]['title']}</strong></h1>
+                                    <p>${allThreads[i]['body']}</p><br>
+                                    <button class="button view-button">View</button>
+                                </div>
+                            `);
                         }
                     }
                 }
-
-            
-
-            // console.log(typeof(threads[0]));
-        
-            // for (let i = 0; i < allThreads.length; i++){
-            //     for (let c = 0; c < threads.length; c++) {
-            //         if(allThreads[i] == threads[i]){
-            //             userThreads.push(threads[i]);
-            //          }
-            //     }
-            //  }
-             
-
-
-
-
-
-
         }).catch(function(error) {
-        alert(error + " hit when rendering saved feeds");
-    });
-
-
+            console.log(error + " hit when rendering saved feeds");
+    });};
 }).catch(function(error) {
-    alert(error + " hit when rendering saved feeds");
+    console.log(error + " hit when rendering saved feeds");
 });
-
-
-
-
-
-
-   
-
-    // let IDs = [];
-    // for(let i in threads) {
-    //     IDs.push(i);
-    // }
-    
-    //let replyIDs = IDs.filter(reply => threads[reply]['parentID'] == parentID);
-    // for(let i = 0; i < userThreads.length; i++) {
-    //     $favoriteFeed.append(`
-    //         <div class="box">
-    //             <h1 class="subtitle is-6"><strong>${threads[userThreads[i]]['title']}</strong></h1>
-    //             <p>${threads[userThreads[i]]['body']}</p>
-    //         </div>
-    //     `);
-    // } 
-
-    //TODO
-    //make render functions
 }
 
 export const renderSportsPage = function() {
@@ -634,8 +500,6 @@ export const loadGames = async function(id, leagueID) {
     let url = 'https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php?id=' + leagueID;
     let result = await axios.get(url);
 
-    console.log(result);
-
     let games = result.data.events;
     
     for(let i = 0; i < games.length; i++) {
@@ -671,7 +535,6 @@ export const handleBackButtonEvent = function(event) {
     localStorage.setItem('currentViewingID', null);
 
     window.location.replace("home.html");
-    //renderSite();
 }
 
 export const handleAccountButtonEvent = function(event) {
@@ -754,9 +617,8 @@ export const handleReplySendButtonEvent = async function(event) {
             headers: { Authorization: `Bearer ${jwt}`}
     }).then(function(response) {
         renderPost();
-        //TODO: maybe make it so it doesn't reload at the top of the page
     }).catch(function(error) {
-        alert(error.response.data['msg']);
+        console.log(error.response.data['msg']);
     });
 }
 
@@ -787,9 +649,8 @@ export const handleSendNewThreadButton = async function(event) {
         event.preventDefault();     
         renderPost();
 
-        //TODO...maybe: have the new post show up at the top of the threadFeed right after it is made...probably do with a helper function
     }).catch(function(error) {
-        alert(error.response.data['msg']);
+        console.log(error.response.data['msg']);
     });
 
     url = 'http://localhost:3000/user/myPosts/' + postID;
@@ -808,8 +669,6 @@ export const handleSendNewThreadButton = async function(event) {
 }
 
 export const getTitles = async function(event) {
-    
-
     let url = 'http://localhost:3000/private/threads';
 
     let jwt = localStorage.getItem('jwt');
@@ -822,12 +681,8 @@ export const getTitles = async function(event) {
         titles = response.data.result;
         return titles;   
     }).catch(function(error) {
-        alert(error + " hit when loading titles");
-
-
-        
+        console.log(error + " hit when loading titles");       
     });
-
         let titles = output;
         let counter = 0;
 
@@ -865,7 +720,7 @@ export const handleFavoriteButtonEvent = async function(event) {
     }).then(function(response) {
         console.log("thread saved");
     }).catch(function(error) {
-        alert(error + " when saving thread");
+        console(error + " when saving thread");
     });
 }
 
@@ -942,10 +797,10 @@ export const handleSubmitSearchButton = async function(event) {
         setTimeout(function() {
             const $warn = $('#searchWarning');
             $warn.empty();
-        }, 5000);
+        }, 3000);
 
     }).catch(function(error) {
-        alert(error + " hit when searching");
+        console.log(error + " hit when searching");
     });
 }
 
@@ -955,26 +810,81 @@ export const handleEditButtonEvent = async function(event) {
     let viewing = localStorage.getItem('currentViewingID');
     let url = 'http://localhost:3000/user/myPosts/' + viewing;
     let jwt = localStorage.getItem('jwt');
+    const $body = $('#bodyBox');
+
+    await axios.get(url, {headers: { Authorization: `Bearer ${jwt}`}}, {data: "edited"}).
+    then(function(response) {
+        $body.replaceWith(`
+        <textarea class="textarea" id="editBox">${response.data.result}</textarea>
+        `);
+
+        const $editDiv = $('#postBox');
+        $editDiv.append(`
+        <br>
+        <div class="field is-grouped">
+            <button class="button is-info is-outlined edit-send-button">Send</button>
+            <button class="button is-danger edit-cancel-button">Cancel</button>
+        </div>
+        `);
+    }).catch(function(error) {
+        console.log(error + " when trying to edit")
+    })  
+}
+
+export const handleEditSendEvent = async function(event) {
+    let viewing = localStorage.getItem('currentViewingID');
+    let url = 'http://localhost:3000/user/myPosts/' + viewing;
+    let jwt = localStorage.getItem('jwt');
+    let edited = document.getElementById('editBox').value;
 
     await axios.post(url, {
-        headers: { Authorization: `Bearer ${jwt}`}
-    }, {
-        data: "edited"
+        data: edited,
+    },
+    {
+        headers: { Authorization: `Bearer ${jwt}`},
     }).then(function(response) {
-
+        console.log("adding post to user store");
     }).catch(function(error) {
-
+        console.log(error + " when editing post to user store");
     });
 
+
+    let url2 = 'http://localhost:3000/private/threads/' + viewing + '/body';
+    await axios.post(url2, {
+        data: edited,
+    },
+    {
+        headers: { Authorization: `Bearer ${jwt}`},
+    }).then(function(response) {
+        renderPost();
+    }).catch(function(error) {
+        console.log(error + " when editing post to private store");
+    });
+}
+
+export const handleEditCancelEvent = function(event) {
+    event.preventDefault();
+
+    renderPost();
 }
 
 export const handleDeleteButtonEvent = function(event) {
     event.preventDefault();
+
+    let viewing = localStorage.getItem('currentViewingID');
+    let url = 'http://localhost:3000/user/myPosts/' + viewing;
+    let jwt = localStorage.getItem('jwt');
+
+    axios.delete(url, {headers: { Authorization: `Bearer ${jwt}`}});
+
+    let url2 = 'http://localhost:3000/private/threads/' + viewing;
+    axios.delete(url2, {headers: { Authorization: `Bearer ${jwt}`}});
+    
+    localStorage.setItem('currentViewingID', null);
+    renderSite();
 }
 
 $(async function() {
-
-
     if((localStorage.getItem('currentViewingID')).toString() != 'null'){
         renderPost();
     } else {
@@ -1008,6 +918,10 @@ $(async function() {
     $root.on('click', '.edit-button', handleEditButtonEvent);
 
     $root.on('click', '.delete-button', handleDeleteButtonEvent);
+
+    $root.on('click', '.edit-send-button', handleEditSendEvent);
+
+    $root.on('click', '.edit-cancel-button', handleEditCancelEvent); 
 
     let titles  = await getTitles();
 
