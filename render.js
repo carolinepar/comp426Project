@@ -221,9 +221,9 @@ console.log(viewingID);
         <br>
         <div id=${viewingID}>
         <h1 class="title is-3" id="threadTitle">${result['title']}</h1>
-        <div class="box" style="margin-left: 5%; margin-right:5%;">
+        <div class="box" style="margin-left: 5%; margin-right:5%;" id="postBox">
             <h1 class="title is-4">${result['author']}</h1>
-            <p>${result['body']}</p>    
+            <p id="bodyBox">${result['body']}</p>    
             </div>
             <div id="commentFeed" class="box" style="background-color: #209CEE; margin-left: 5%; margin-right:5%;">
                 <h1 class="title is-4" style="color: white;">Replies</h1>
@@ -448,7 +448,6 @@ export const renderAccount = async function() {
         alert(error + " hit when rendering commentFeed");
     });
 
-<<<<<<< HEAD
     console.log(allThreads);
     console.log(threads);
 
@@ -459,28 +458,6 @@ export const renderAccount = async function() {
              }
         }
      }
-=======
-   
-   
-
-    // let IDs = [];
-    // for(let i in threads) {
-    //     IDs.push(i);
-    // }
-    
-    //let replyIDs = IDs.filter(reply => threads[reply]['parentID'] == parentID);
-    // for(let i = 0; i < userThreads.length; i++) {
-    //     $favoriteFeed.append(`
-    //         <div class="box">
-    //             <h1 class="subtitle is-6"><strong>${threads[userThreads[i]]['title']}</strong></h1>
-    //             <p>${threads[userThreads[i]]['body']}</p>
-    //         </div>
-    //     `);
-    // } 
-
-    //TODO
-    //make render functions
->>>>>>> 67fc71e632bf84f47196c64851f0b4f13dff228e
 }
 
 export const renderSportsPage = function() {
@@ -855,21 +832,78 @@ export const handleEditButtonEvent = async function(event) {
     let viewing = localStorage.getItem('currentViewingID');
     let url = 'http://localhost:3000/user/myPosts/' + viewing;
     let jwt = localStorage.getItem('jwt');
+    const $body = $('#bodyBox');
+
+    await axios.get(url, {headers: { Authorization: `Bearer ${jwt}`}}, {data: "edited"}).
+    then(function(response) {
+        $body.replaceWith(`
+        <textarea class="textarea" id="editBox">${response.data.result}</textarea>
+        `);
+
+        const $editDiv = $('#postBox');
+        $editDiv.append(`
+        <br>
+        <div class="field is-grouped">
+            <button class="button is-info is-outlined edit-send-button">Send</button>
+            <button class="button is-danger edit-cancel-button">Cancel</button>
+        </div>
+        `);
+    }).catch(function(error) {
+        console.log(error + " when trying to edit")
+    })  
+}
+
+export const handleEditSendEvent = async function(event) {
+    let viewing = localStorage.getItem('currentViewingID');
+    let url = 'http://localhost:3000/user/myPosts/' + viewing;
+    let jwt = localStorage.getItem('jwt');
+    let edited = document.getElementById('editBox').value;
 
     await axios.post(url, {
-        headers: { Authorization: `Bearer ${jwt}`}
-    }, {
-        data: "edited"
+        data: edited,
+    },
+    {
+        headers: { Authorization: `Bearer ${jwt}`},
     }).then(function(response) {
-
+        console.log("adding post to user store");
     }).catch(function(error) {
-
+        console.log(error + " when editing post to user store");
     });
 
+
+    let url2 = 'http://localhost:3000/private/threads/' + viewing + '/body';
+    await axios.post(url2, {
+        data: edited,
+    },
+    {
+        headers: { Authorization: `Bearer ${jwt}`},
+    }).then(function(response) {
+        renderPost();
+    }).catch(function(error) {
+        console.log(error + " when editing post to private store");
+    });
+}
+
+export const handleEditCancelEvent = function(event) {
+    event.preventDefault();
+
+    renderPost();
 }
 
 export const handleDeleteButtonEvent = function(event) {
     event.preventDefault();
+
+    let viewing = localStorage.getItem('currentViewingID');
+    let url = 'http://localhost:3000/user/myPosts/' + viewing;
+    let jwt = localStorage.getItem('jwt');
+
+    axios.delete(url, {headers: { Authorization: `Bearer ${jwt}`}});
+
+    let url2 = 'http://localhost:3000/private/threads/' + viewing;
+    axios.delete(url2, {headers: { Authorization: `Bearer ${jwt}`}});
+    
+    localStorage.setItem('currentViewingID', null);
+    renderSite();
 }
 
 $(async function() {
@@ -908,6 +942,10 @@ $(async function() {
     $root.on('click', '.edit-button', handleEditButtonEvent);
 
     $root.on('click', '.delete-button', handleDeleteButtonEvent);
+
+    $root.on('click', '.edit-send-button', handleEditSendEvent);
+
+    $root.on('click', '.edit-cancel-button', handleEditCancelEvent); 
 
     let titles  = await getTitles();
 
