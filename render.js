@@ -10,9 +10,9 @@ export const renderSite = function() {
             </div>
         </div>
     </section>
-    <div class="field is-grouped">
-        <button class="button account-button" style="margin-left:2%; margin-top:15px;">Account</button>
-        <button class="button sports-button" style="margin-left:5px; margin-top:15px;">Sports</button>
+    <div class="field is-grouped has-addons" style="margin-top:15px">
+        <button class="button account-button" style="margin-left:2%;">Account</button>
+        <button class="button sports-button" style="margin-left:5px;">Upcoming Events</button>
     </div>
     <section class="section">
         <div class="box" style="background-color: #209CEE;">
@@ -207,7 +207,7 @@ export const renderPost = async function() {
     <section>
         <div class="field is-grouped" style="margin-left:4%; margin-top:15px;">
             <button class="button back-button">Back</button>
-            <button class="button favorite-button" style="margin-left:5px;" id="favoriteButton" type="button">&#10084</button>
+            <button class="button favorite-button" style="margin-left:5px;" id="favoriteButton">&#10084</button>
         </div>
         <br>
         <div id=${viewingID}>
@@ -251,7 +251,7 @@ export async function renderComments() {
             for(let i = 0; i < replyIDs.length; i++) {
                 $comments.append(`
                     <div class="box">
-                        <h1 class="subtitle is-6"><strong>${threads[replyIDs[i]]['author']}</strong></h1>
+                        <h1 class="subtitle is-6">${threads[replyIDs[i]]['author']}</h1>
                         <p>${threads[replyIDs[i]]['reply']}</p>
                     </div>
                 `);
@@ -320,7 +320,7 @@ export const renderAccount = function() {
     //make render functions
 }
 
-export const renderSportsPage = async function() {
+export const renderSportsPage = function() {
     const $root = $('#root');
     $root.empty();
 
@@ -329,17 +329,16 @@ export const renderSportsPage = async function() {
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">426Sports</h1>
+                <h1 class="subtitle">Upcoming events</h1>
             </div>
         </div>
     </section>
     <section>
-        <div style="margin-left: 2%; margin-top:15px;">
-            <h1 class="title">Upcoming events</h1>
-        </div>
+        <button class="button back-button" style="margin-left:4%; margin-top:15px;">Back</button>
+        <br>
         <br>
         <div style="margin-left: 4%; margin-top:15px; margin-right:4%">
             <h1 class="is-4 title">NFL</h1>
-            <br>
             <div class="box" id="nflGames">
                 
             </div>
@@ -347,42 +346,25 @@ export const renderSportsPage = async function() {
         <br>
         <div style="margin-left: 4%; margin-top:15px;">
             <h1 class="is-4 title">NBA</h1>
-            <br>
             <div class="box" style="margin-right:4%" id="nbaGames">
             </div>
         </div>
         <br>
         <div style="margin-left: 4%; margin-top:15px;">
-            <h1 class="is-4 title">MLB</h1>
-            <br>
-            <div class="box" style="margin-right:4%" id="mlbGames">
-            </div>
-        </div>
-        <br>
-        <div style="margin-left: 4%; margin-top:15px;">
             <h1 class="is-4 title">NHL</h1>
-            <br>
             <div class="box" style="margin-right:4%" id="nhlGames">
             </div>
         </div>
         <br>
-        <div style="margin-left: 4%; margin-top:15px;">
-            <h1 class="is-4 title">NCAA Men's Basketball</h1>
-            <br>
-            <div class="box" style="margin-right:4%" id="ncaamGames">
-            </div>
-        </div>
-        <br>
-        <div style="margin-left: 4%; margin-top:15px;">
-            <h1 class="is-4 title">NCAA Football</h1>
-            <br>
-            <div class="box" style="margin-right:4%" id="ncaafGames">
-            </div>
-        </div>
     </section>
     `);
     
     loadGames('nflGames', 4391);
+    loadGames('nbaGames', 4387);
+    //loadGames('mlbGames', 4424);
+    loadGames('nhlGames', 4380);
+    //loadGames('ncaafGames', 4479);
+    
     
 
     
@@ -395,49 +377,27 @@ export const loadGames = async function(id, leagueID) {
     let url = 'https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php?id=' + leagueID;
     let result = await axios.get(url);
 
-    let homeTeams = [];
-    let awayTeams = [];
+    console.log(result);
 
-    let dates = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    let games = result.data.events;
     
-    for(let i = 0; i < result.data.events.length; i++) {
-        homeTeams.push(result.data.events[i]['idHomeTeam']);
-        awayTeams.push(result.data.events[i]['idAwayTeam']);
-    }
+    for(let i = 0; i < games.length; i++) {
+        let date = new Date(games[i]['dateEventLocal']);
 
-    for(let i = 0 ; i < result.data.events.length; i++) {
-        let gameDay = result.data.events[i]['dateEventLocal'];
-
-        
-        
-        let date = new Date(gameDay);
+        let dates = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
         
         let day = dates[date.getDay()];
-        let month = months[date.getMonth()];
+        let month = date.getMonth()+1;
         let numDay = date.getDate();
-        
-        let awayURL = 'https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=' + awayTeams[i];
-        let awayTeamInfo = await axios.get(awayURL);
-        
-        let homeURL = 'https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=' + homeTeams[i];
-        let homeTeamInfo = await axios.get(homeURL);
-    
-        let homeTeam = homeTeamInfo.data.teams[0]['strTeam'];
-        let homeImgURL = homeTeamInfo.data.teams[0]['strTeamBadge'] + '/preview';
-    
-        let awayTeam = awayTeamInfo.data.teams[0]['strTeam'];
-        let awayImgURL = awayTeamInfo.data.teams[0]['strTeamBadge'] + '/preview';
 
         $gameID.append(`
-            <div class="gameTime">
-                <h3 class="subtitle is-6">${day} ${month}/${numDay}</h3>
-            </div>
-            <div style="overflow:auto; width:100%">
-                <img src="${awayImgURL}" alt="away team logo" height="75px" width="75px" style="float:left">
-                <h1 class="is-5 subtitle" style="float:left; margin-left:5px; margin-top:20px;">${awayTeam} @ ${homeTeam}</h1>
-                <img src="${homeImgURL}" alt="home team logo" height="75px" width="75px" style="float:left; margin-left:5px;">
-            </div>
+        <div class="gameTime">
+            <h3 class="subtitle is-6">${day} ${month}/${numDay}</h3>
+        </div>
+        <div>
+            <h3 class="title is-5">${games[i]['strAwayTeam']} @ ${games[i]['strHomeTeam']}</h3>
+        </div>
+        <br>
         `);
     }
 }
@@ -505,7 +465,7 @@ export const handleNewThreadButton = function(event) {
                         <textarea class="textarea" id="newPostBody" placeholder="Text"></textarea>
                     </div>
                 </div>
-                <button class="button send-new-thread-button" type="button">Send</button>
+                <button class="button send-new-thread-button">Send</button>
             </div>
         </div>
     </section>
@@ -564,46 +524,15 @@ export const handleSendNewThreadButton = function(event) {
         headers: { Authorization: `Bearer ${jwt}`}
     }).then(function(response) {
         //TODO: make it so a title, body are required
-    
         
-
-        let url = 'http://localhost:3000/user/createdThreads/';
-    
-        axios.post(url, {
-            'data': [postID],
-            'type':'merge'
-        },
-            {
-                headers: { Authorization: `Bearer ${jwt}`}
-        }).then(function(response) {
-            
-        }).catch(function(error) {
-            alert(error.response.data['msg']);
-        });
-         
-
-
-
-
-
-
-
-
-
-
-
+        
         localStorage.setItem('currentViewingID', postID);
-        
-
-        event.preventDefault();
-
         renderPost();
 
         //TODO...maybe: have the new post show up at the top of the threadFeed right after it is made...probably do with a helper function
     }).catch(function(error) {
         alert(error.response.data['msg']);
     });
-    event.preventDefault();
 }
 
 export const getTitles = async function(event) {
@@ -652,28 +581,6 @@ export const handleFavoriteButtonEvent = function(event) {
 
     //TODO
     //Update in the user datastore that this thread was favorited
-    
-    let postID = localStorage.getItem('currentViewingID');
-    let jwt = localStorage.getItem('jwt');
-    
-    let url = 'http://localhost:3000/user/savedThreads/';
-    
-    axios.post(url, {
-        'data': [postID],
-        'type':'merge'
-    },
-        {
-            headers: { Authorization: `Bearer ${jwt}`}
-    }).then(function(response) {
-        event.preventDefault();
-        
-    }).catch(function(error) {
-        alert(error.response.data['msg']);
-    });
-     
-
-
-
 }
 
 export const handleUnfavoriteButtonEvent = function(event) {
