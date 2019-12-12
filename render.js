@@ -10,7 +10,10 @@ export const renderSite = function() {
             </div>
         </div>
     </section>
-    <button class="button account-button" style="margin-left:2%; margin-top:15px;">Account</button>
+    <div class="field is-grouped">
+        <button class="button account-button" style="margin-left:2%; margin-top:15px;">Account</button>
+        <button class="button sports-button" style="margin-left:5px; margin-top:15px;">Sports</button>
+    </div>
     <section class="section">
         <div class="box" style="background-color: #209CEE;">
             <h1 class="title" style="color:white; display:inline-block;">Threads</h1><button class="button is-rounded is-light new-thread-button" style="float:right">Post New Thread</button>
@@ -320,6 +323,25 @@ export const renderAccount = function() {
     //make render functions
 }
 
+export const renderSportsPage = async function() {
+    const $root = $('#root');
+    $root.empty();
+
+    $root.append(`
+    <section class="hero is-info is-bold">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">426Sports</h1>
+            </div>
+        </div>
+    </section>
+    `);
+
+    let url = 'https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php?id=4391';
+    let result = await axios.get(url);
+    console.log(result);
+}
+
 export const handleViewButtonEvent = function(event) {
     event.preventDefault();
     localStorage.setItem('currentViewingID', event.target.parentElement.id);
@@ -515,6 +537,12 @@ export const handleUnfavoriteButtonEvent = function(event) {
     //Update in the user datastore that this thread was unfavorited
 }
 
+export const handleSportsButtonEvent = function(event) {
+    event.preventDefault();
+
+    renderSportsPage();
+}
+
 $(async function() {
     renderSite();
 
@@ -535,6 +563,8 @@ $(async function() {
     $root.on('click', '.favorite-button', handleFavoriteButtonEvent);
 
     $root.on('click', '.unfavorite-button', handleUnfavoriteButtonEvent);
+
+    $root.on('click', '.sports-button', handleSportsButtonEvent);
 
     let titles  = await getTitles();
     autocomplete(document.getElementById("searchThread"), titles);
