@@ -11,33 +11,22 @@
         <link rel="stylesheet" href="customstyle.css"/>
         <link rel="stylesheet" href="node_modules/bulma/css/bulma.css"/>
     </head>
-    <body>
-
-
-                
-
-            <section class="hero is-info is-bold">
-                <div class="hero-body">
-                    <div class="container">
-                        <h1 class="title">426Sports</h1>
-                        <h2 class="subtitle">For all your sporting discussions</h2>
-                    </div>
+    <body>        
+        <section class="hero is-info is-bold">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">426Sports</h1>
+                    <h2 class="subtitle">For all your sporting discussions</h2>
                 </div>
-            </section>
-
-            
-
-            <section class="section">
-                <p class="content is-large" style="margin-left:8%; margin-right:8%;">Welcome to 426Sports! Feel free to choose your favorite leagues and discuss with other passionate
-                    fans!
-                </p>
-            </section>
-
-            <div id="response">
-
-
             </div>
-
+        </section>
+        <section class="section">
+            <p class="content is-large" style="margin-left:8%; margin-right:8%;">
+                Welcome to 426Sports, your one stop place to see upcoming games and discuss everything sports 
+                with other die-hard fanatics!
+            </p>
+        </section>
+            <div id="response"></div>
             <section class="section" id="login-forms">
                 <div class="tile is-ancestor">
                     <div class="tile is-1"></div>
@@ -67,7 +56,11 @@
                         <div class="field">
                             <form id="signupForm">
                             <h1 class="title">Create Account</h1>
-                            
+                            <label class="label">Enter Email</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="johnsmith123@email.com" id="registerEmail" autocomplete="off"/>
+                            </div>
+                            <br>
                             <label class="label">Enter Username</label>
                             <div class="control">
                                 <input class="input" type="text" placeholder="Username" id="registerUsername" autocomplete="off"/>
@@ -86,14 +79,7 @@
                     </div>
                     <div class="tile is-1"></div>
                 </div>
-            </section>
-            <!-- <section>
-                <div class="control" style="text-align:center; margin-bottom:50px;">
-                        <button class="button is-info">Continue as guest</button>
-                </div>
-            </section> -->
-
-            
+            </section>            
         <script src="node_modules/axios/dist/axios.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="login.js" type="module"></script>

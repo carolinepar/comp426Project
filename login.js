@@ -1,5 +1,3 @@
-
-
 function userRegister(event){
 
   let username = document.getElementById('registerUsername').value;
@@ -14,17 +12,32 @@ function userRegister(event){
     }
   })
   .then(function(response) {
-    //window.location.replace("home.html");
-    alert("account created, please log in");
-    //let responseDiv = document.getElementById('response');
-    //responseDiv.innerHTML = `<div class="message is-success" style="padding: 20px;"><p>Success: Account has been created</p></div>`;
-})
-  .catch(function(error) {
-    //TODO: set an if statement to catch diff kinds of errors... rn this is 401 -- maybe not since it displays message instead
     let responseDiv = document.getElementById('response');
-  responseDiv.innerHTML = `<div class="message is-danger" style="padding: 20px;"><p>Error: ${error.response.data['msg']}</p></div>`;
+    responseDiv.innerHTML = `<div class="message is-success" style="padding: 20px;"><p>Account has been created. Please log in</p></div>`;
 
-    //getError(error);
+    document.getElementById('registerUsername').value = "";
+    document.getElementById('registerPassword').value = "";
+    document.getElementById('registerEmail').value = "";
+
+    setTimeout(function() {
+      const $responseDiv = $('#response')
+      $responseDiv.empty();
+    }, 5000);
+
+  })
+  .catch(function(error) {
+    let responseDiv = document.getElementById('response');
+    responseDiv.innerHTML = `<div class="message is-danger" style="padding: 20px;"><p>Error: ${error.response.data['msg']}</p></div>`;
+    
+    document.getElementById('registerUsername').value = "";
+    document.getElementById('registerPassword').value = "";
+    document.getElementById('registerEmail').value = "";
+  
+
+    setTimeout(function() {
+      const $responseDiv = $('#response')
+      $responseDiv.empty();
+    }, 5000);
   })
   event.preventDefault();
 
@@ -45,16 +58,16 @@ function userLogin(event){
     console.log(responseValues[0]['jwt']);
     localStorage.setItem('jwt', responseValues[0]['jwt']);
     localStorage.setItem('loggedInUser', username);
-    // localStorage.setItem('loggedInPass', password);
-
-    //TODO: Redirect
-    //let responseDiv = document.getElementById('response');
-    //responseDiv.innerHTML = `<div class="message is-success" style="padding: 20px;"><p>Success: Account has been created</p></div>`;
-})
+  })
   .catch(function(error) {
     //TODO: set an if statement to catch diff kinds of errors... rn this is 401 -- maybe not since it displays message instead
     let responseDiv = document.getElementById('response');
     responseDiv.innerHTML = `<div class="message is-danger" style="padding: 20px;"><p>Error: ${error.response.data['msg']}</p></div>`;
+  
+    setTimeout(function() {
+      const $responseDiv = $('#response')
+      $responseDiv.empty();
+    }, 5000);
   })
   event.preventDefault();
 
