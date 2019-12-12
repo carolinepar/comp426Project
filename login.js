@@ -4,13 +4,13 @@ function userRegister(event){
 
   let username = document.getElementById('registerUsername').value;
   let password = document.getElementById('registerPassword').value;
+  let email = document.getElementById('registerEmail').value;
 
   axios.post('http://localhost:3000/account/create', {
     name: username,
     pass: password,
     data: {
-      "createdThreads": [],
-      "favoriteThreads": []
+      "email": email
     }
   })
   .then(function(response) {
@@ -45,6 +45,7 @@ function userLogin(event){
     console.log(responseValues[0]['jwt']);
     localStorage.setItem('jwt', responseValues[0]['jwt']);
     localStorage.setItem('loggedInUser', username);
+    // localStorage.setItem('loggedInPass', password);
 
     //TODO: Redirect
     //let responseDiv = document.getElementById('response');
