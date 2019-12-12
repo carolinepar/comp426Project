@@ -375,10 +375,7 @@ console.log(threads);
             let allThreads = axios.get(url, {
                 headers: { Authorization: `Bearer ${jwt}`}
                 }).then(function(response) {
-                    
 
-
-         
                     let allThreads = response.data.result;
                     let userThreads;
                     let userTitles;
@@ -397,8 +394,10 @@ console.log(threads);
                         }
                     }
                 }).catch(function(error) {
+
                     console.log(error + " hit when rendering saved feeds");
             });}
+
         }).catch(function(error) {
             console.log(error + " hit when rendering commentFeed");
     });
@@ -411,6 +410,7 @@ console.log(threads);
         headers: { Authorization: `Bearer ${jwt}`}
         }).then(function(response) {
             let threads = response.data.result;
+
 
             if (Object.keys(threads).length === 0 && threads.constructor === Object){
 
@@ -442,8 +442,10 @@ console.log(threads);
                     }
                 }
         }).catch(function(error) {
+
             console.log(error + " hit when rendering saved feeds");
     });};
+
 }).catch(function(error) {
     console.log(error + " hit when rendering saved feeds");
 });
@@ -682,6 +684,7 @@ export const getTitles = async function(event) {
         return titles;   
     }).catch(function(error) {
         console.log(error + " hit when loading titles");       
+
     });
         let titles = output;
         let counter = 0;
