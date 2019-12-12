@@ -369,7 +369,6 @@ export const renderAccount = async function() {
     // }
     
     //let replyIDs = IDs.filter(reply => threads[reply]['parentID'] == parentID);
-     console.log("yee");
     // for(let i = 0; i < userThreads.length; i++) {
     //     $favoriteFeed.append(`
     //         <div class="box">
@@ -410,6 +409,8 @@ export const handleViewButtonEvent = function(event) {
 
 export const handleBackButtonEvent = function(event) {
     event.preventDefault();
+    
+    localStorage.setItem('currentViewingID', null);
 
     renderSite();
 }
@@ -557,7 +558,7 @@ export const handleSendNewThreadButton = function(event) {
 
         event.preventDefault();
 
-        renderPost();
+        renderPost();//will actually render post so leave it
 
         //TODO...maybe: have the new post show up at the top of the threadFeed right after it is made...probably do with a helper function
     }).catch(function(error) {
@@ -657,7 +658,29 @@ export const handleSportsButtonEvent = function(event) {
 }
 
 $(async function() {
-    renderSite();
+
+
+    if((localStorage.getItem('currentViewingID')).toString() != 'null'){
+        renderPost();
+    } else {
+        renderSite();
+    }
+        
+        // const $root = $('#root');
+        
+        // $root.on('click', '.back-button', handleBackButtonEvent);
+
+        // $root.on('click', '.reply-button', handleReplySendButtonEvent);
+
+        // $root.on('click', '.favorite-button', handleFavoriteButtonEvent);
+
+        // $root.on('click', '.unfavorite-button', handleUnfavoriteButtonEvent);
+
+        // return;
+
+    
+
+    // renderSite();
 
     const $root = $('#root');
 
@@ -680,7 +703,10 @@ $(async function() {
     $root.on('click', '.sports-button', handleSportsButtonEvent);
 
     let titles  = await getTitles();
-    autocomplete(document.getElementById("searchThread"), titles);
+
+    if((localStorage.getItem('currentViewingID')).toString() == 'null'){
+        autocomplete(document.getElementById("searchThread"), titles);
+    }
 
 });
 
