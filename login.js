@@ -70,20 +70,28 @@ function userLogin(event){
     }, 5000);
   })
   event.preventDefault();
+}
 
+function sendFeedback(event) {
+  event.preventDefault();
+
+  let ID = new Date().getTime();
+  let feedback = document.getElementById('feedbackBox').value;
+
+  axios.post('http://localhost:3000/public/feedback/' + ID, {
+    data: {
+      "response": feedback
+    },
+  }).then(function(response) {
+    document.getElementById('feedbackBox').value = "";
+  }).catch(function(error) {
+    console.log(error);
+  });
 }
 
 
-
-
-$(function() {
-    
-    //////////const $signupForm = $('#signupForm');
-    //////////const $root = $('#content');
-
-   /////////// $("#content").on('click', `#loginSubmit`, handleloginSubmitButton);
- 
-    
+$(async function() {
   document.getElementById('registerSubmit').addEventListener('click', userRegister);
   document.getElementById('loginSubmit').addEventListener('click', userLogin);
-  });
+  document.getElementById('feedbackSend').addEventListener('click', sendFeedback);
+});
