@@ -385,10 +385,10 @@ export const renderAccount = async function() {
                         }
                     }
                 }).catch(function(error) {
-                alert(error + " hit when rendering saved feeds");
+                console.log(error + " hit when rendering saved feeds");
             });
         }).catch(function(error) {
-        alert(error + " hit when rendering commentFeed");
+        console.log(error + " hit when rendering commentFeed");
     });
 
     const $createdThreads = $('#createdThreadsFeed');
