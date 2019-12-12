@@ -395,8 +395,8 @@ console.log(threads);
                     }
                 }).catch(function(error) {
                 console.log(error + " hit when rendering saved feeds");
-            });
-        }).catch(function(error) {
+                });}
+            }).catch(function(error) {
         console.log(error + " hit when rendering commentFeed");
     });
 
@@ -882,7 +882,8 @@ export const handleDeleteButtonEvent = function(event) {
     axios.delete(url2, {headers: { Authorization: `Bearer ${jwt}`}});
     
     localStorage.setItem('currentViewingID', null);
-    renderSite();
+    //renderSite();
+    window.location.replace("home.html");
 }
 
 $(async function() {
