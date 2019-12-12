@@ -18,10 +18,10 @@ export const renderSite = function() {
     <section class="section">
         <div class="box" style="background-color: #209CEE;">
             <h1 class="title" style="color:white; display:inline-block;">Threads</h1><button class="button is-rounded is-light new-thread-button" style="float:right">Post New Thread</button>
-            <div class="field has-addons search" style="width:100%;"> 
-                <input class="input" type="text" placeholder="Search threads" name="mySearch" id="searchThread">
+            <div class="field has-addons search" style="width:100%;" id="seachDiv";> 
+                <input class="input" type="text" placeholder="Search threads" name="mySearch" id="searchThread" autocomplete="off">
                 <div class="control">
-                    <button class="button is-rounded" id="submitSearch">Submit</button>
+                    <button class="button is-rounded submit-search-button" id="submitSearch">Submit</button>
                 </div>
             </div>
             <br>
@@ -475,7 +475,8 @@ export const handleViewButtonEvent = function(event) {
 export const handleBackButtonEvent = function(event) {
     event.preventDefault();
 
-    renderSite();
+    window.location.replace("home.html");
+    //renderSite();
 }
 
 export const handleAccountButtonEvent = function(event) {
@@ -676,6 +677,53 @@ export const handleLogoutButtonEvent = function(event) {
     window.location.replace("index.html");
 }
 
+export const handleSubmitSearchButton = async function(event) {
+    event.preventDefault();
+
+    const $warn = $('#searchWarning');
+    $warn.empty();
+
+    let url = 'http://localhost:3000/private/threads';
+    let jwt = localStorage.getItem('jwt');
+    let search = document.getElementById('searchThread').value;
+
+    let result = await axios.get(url, {
+        headers: { Authorization: `Bearer ${jwt}`}
+    }).then(function(response) {
+        let threads = response.data.result;
+        
+        let IDs = [];
+        for(let i in threads) {
+            IDs.push(i);
+        }
+
+        for(let i = 0; i < IDs.length; i++) {
+            if(search == threads[IDs[i]]['title']) {
+                localStorage.setItem('currentViewingID', IDs[i]);
+                renderPost();
+                break;
+            }
+        }
+
+        let $threads = $('#threadFeed');
+        $threads.prepend(`
+            <div  id="searchWarning">
+                <div class="box" style="width:39%; margin-left:30%; background-color:#B33A3A;">
+                    <h1 class="title is-4" style="color:white;">A thread with that title was not found<h1>
+                </div>
+            <div>
+        `);
+
+        setTimeout(function() {
+            const $warn = $('#searchWarning');
+            $warn.empty();
+        }, 5000);
+
+    }).catch(function(error) {
+        alert(error + " hit when searching");
+    });
+}
+
 $(async function() {
     renderSite();
 
@@ -700,6 +748,8 @@ $(async function() {
     $root.on('click', '.sports-button', handleSportsButtonEvent);
 
     $root.on('click', '.logout-button', handleLogoutButtonEvent);
+
+    $root.on('click', '.submit-search-button', handleSubmitSearchButton);
 
     let titles  = await getTitles();
     autocomplete(document.getElementById("searchThread"), titles);
