@@ -332,11 +332,114 @@ export const renderSportsPage = async function() {
             </div>
         </div>
     </section>
+    <section>
+        <div style="margin-left: 2%; margin-top:15px;">
+            <h1 class="title">Upcoming events</h1>
+        </div>
+        <br>
+        <div style="margin-left: 4%; margin-top:15px; margin-right:4%">
+            <h1 class="is-4 title">NFL</h1>
+            <br>
+            <div class="box" id="nflGames">
+                
+            </div>
+        </div>
+        <br>
+        <div style="margin-left: 4%; margin-top:15px;">
+            <h1 class="is-4 title">NBA</h1>
+            <br>
+            <div class="box" style="margin-right:4%" id="nbaGames">
+            </div>
+        </div>
+        <br>
+        <div style="margin-left: 4%; margin-top:15px;">
+            <h1 class="is-4 title">MLB</h1>
+            <br>
+            <div class="box" style="margin-right:4%" id="mlbGames">
+            </div>
+        </div>
+        <br>
+        <div style="margin-left: 4%; margin-top:15px;">
+            <h1 class="is-4 title">NHL</h1>
+            <br>
+            <div class="box" style="margin-right:4%" id="nhlGames">
+            </div>
+        </div>
+        <br>
+        <div style="margin-left: 4%; margin-top:15px;">
+            <h1 class="is-4 title">NCAA Men's Basketball</h1>
+            <br>
+            <div class="box" style="margin-right:4%" id="ncaamGames">
+            </div>
+        </div>
+        <br>
+        <div style="margin-left: 4%; margin-top:15px;">
+            <h1 class="is-4 title">NCAA Football</h1>
+            <br>
+            <div class="box" style="margin-right:4%" id="ncaafGames">
+            </div>
+        </div>
+    </section>
     `);
+    
+    loadGames('nflGames', 4391);
+    
 
-    let url = 'https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php?id=4391';
+    
+
+    
+}
+
+export const loadGames = async function(id, leagueID) {
+    let $gameID = $('#' + id);
+    let url = 'https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php?id=' + leagueID;
     let result = await axios.get(url);
-    console.log(result);
+
+    let homeTeams = [];
+    let awayTeams = [];
+
+    let dates = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    
+    for(let i = 0; i < result.data.events.length; i++) {
+        homeTeams.push(result.data.events[i]['idHomeTeam']);
+        awayTeams.push(result.data.events[i]['idAwayTeam']);
+    }
+
+    for(let i = 0 ; i < result.data.events.length; i++) {
+        let gameDay = result.data.events[i]['dateEventLocal'];
+
+        
+        
+        let date = new Date(gameDay);
+        
+        let day = dates[date.getDay()];
+        let month = months[date.getMonth()];
+        let numDay = date.getDate();
+        
+        let awayURL = 'https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=' + awayTeams[i];
+        let awayTeamInfo = await axios.get(awayURL);
+        
+        let homeURL = 'https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=' + homeTeams[i];
+        let homeTeamInfo = await axios.get(homeURL);
+    
+        let homeTeam = homeTeamInfo.data.teams[0]['strTeam'];
+        let homeImgURL = homeTeamInfo.data.teams[0]['strTeamBadge'] + '/preview';
+    
+        let awayTeam = awayTeamInfo.data.teams[0]['strTeam'];
+        let awayImgURL = awayTeamInfo.data.teams[0]['strTeamBadge'] + '/preview';
+
+        $gameID.append(`
+            <div class="gameTime">
+                <h3 class="subtitle is-6">${day} ${month}/${numDay}</h3>
+            </div>
+            <div style="overflow:auto; width:100%">
+                <img src="${awayImgURL}" alt="away team logo" height="75px" width="75px" style="float:left">
+                <h1 class="is-5 subtitle" style="float:left; margin-left:5px; margin-top:20px;">${awayTeam} @ ${homeTeam}</h1>
+                <img src="${homeImgURL}" alt="home team logo" height="75px" width="75px" style="float:left; margin-left:5px;">
+            </div>
+        `);
+    }
 }
 
 export const handleViewButtonEvent = function(event) {
