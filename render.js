@@ -207,7 +207,7 @@ export const renderPost = async function() {
     <section>
         <div class="field is-grouped" style="margin-left:4%; margin-top:15px;">
             <button class="button back-button">Back</button>
-            <button class="button favorite-button" style="margin-left:5px;" id="favoriteButton">&#10084</button>
+            <button class="button favorite-button" style="margin-left:5px;" id="favoriteButton" type="button">&#10084</button>
         </div>
         <br>
         <div id=${viewingID}>
@@ -251,7 +251,7 @@ export async function renderComments() {
             for(let i = 0; i < replyIDs.length; i++) {
                 $comments.append(`
                     <div class="box">
-                        <h1 class="subtitle is-6">${threads[replyIDs[i]]['author']}</h1>
+                        <h1 class="subtitle is-6"><strong>${threads[replyIDs[i]]['author']}</strong></h1>
                         <p>${threads[replyIDs[i]]['reply']}</p>
                     </div>
                 `);
@@ -505,7 +505,7 @@ export const handleNewThreadButton = function(event) {
                         <textarea class="textarea" id="newPostBody" placeholder="Text"></textarea>
                     </div>
                 </div>
-                <button class="button send-new-thread-button">Send</button>
+                <button class="button send-new-thread-button" type="button">Send</button>
             </div>
         </div>
     </section>
@@ -564,15 +564,46 @@ export const handleSendNewThreadButton = function(event) {
         headers: { Authorization: `Bearer ${jwt}`}
     }).then(function(response) {
         //TODO: make it so a title, body are required
+    
         
-        
+
+        let url = 'http://localhost:3000/user/createdThreads/';
+    
+        axios.post(url, {
+            'data': [postID],
+            'type':'merge'
+        },
+            {
+                headers: { Authorization: `Bearer ${jwt}`}
+        }).then(function(response) {
+            
+        }).catch(function(error) {
+            alert(error.response.data['msg']);
+        });
+         
+
+
+
+
+
+
+
+
+
+
+
         localStorage.setItem('currentViewingID', postID);
+        
+
+        event.preventDefault();
+
         renderPost();
 
         //TODO...maybe: have the new post show up at the top of the threadFeed right after it is made...probably do with a helper function
     }).catch(function(error) {
         alert(error.response.data['msg']);
     });
+    event.preventDefault();
 }
 
 export const getTitles = async function(event) {
@@ -621,6 +652,28 @@ export const handleFavoriteButtonEvent = function(event) {
 
     //TODO
     //Update in the user datastore that this thread was favorited
+    
+    let postID = localStorage.getItem('currentViewingID');
+    let jwt = localStorage.getItem('jwt');
+    
+    let url = 'http://localhost:3000/user/savedThreads/';
+    
+    axios.post(url, {
+        'data': [postID],
+        'type':'merge'
+    },
+        {
+            headers: { Authorization: `Bearer ${jwt}`}
+    }).then(function(response) {
+        event.preventDefault();
+        
+    }).catch(function(error) {
+        alert(error.response.data['msg']);
+    });
+     
+
+
+
 }
 
 export const handleUnfavoriteButtonEvent = function(event) {
