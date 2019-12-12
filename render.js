@@ -298,7 +298,6 @@ export async function renderComments() {
         }).catch(function(error) {
         alert(error + " hit when rendering commentFeed");
     });
-    //TODO: add some HTML for when there are no comments
 }
 
 export const renderAccountFeed = function() {
@@ -318,7 +317,7 @@ export const renderAccountFeed = function() {
         <br>
         <br>
         <div style="margin-left: 5%; margin-top:5px;">
-            <h1 class="title">Account Name</h1>
+            <h1 class="title">Your Account</h1>
         </div>
         <br>
         <br>
@@ -349,17 +348,12 @@ export const renderAccountFeed = function() {
 export const renderAccount = async function() {
    
     renderAccountFeed();
-
-
-
-
     const $favoriteFeed = $('#SavedThreadsFeed');
     
     let user = localStorage.getItem('loggedInUser');
     let url = 'http://localhost:3000/user/likedPosts' ;
     let jwt = localStorage.getItem('jwt');
-    // let parentID = localStorage.getItem('currentViewingID');
-    
+     
     let threads = axios.get(url, {
         headers: { Authorization: `Bearer ${jwt}`}
         }).then(function(response) {
@@ -374,106 +368,25 @@ export const renderAccount = async function() {
                 headers: { Authorization: `Bearer ${jwt}`}
                 }).then(function(response) {
                     let allThreads = response.data.result;
-                  let userThreads;
-                  let userTitles;
-                  let userBodies;
-
-
-                    // console.log(allThreads);
-
+                    let userThreads;
+                    let userTitles;
+                    let userBodies;
                     for (let i in allThreads) {
                         for (let c in threads) {
-
-
-
-
-
                             if(i === c){
-                                // userThreads[userThreads.length] = allThreads[i]['title'];
-                                // userThreads.push(i);
-                                // console.log(allThreads[i]['title']);
-                                // console.log(allThreads[i]['body']);
-
                                 $favoriteFeed.append(`
-
-                                        <div class="box" id="${i}">
+                                         <div class="box" id="${i}">
                                             <h1 class="subtitle is-6"><strong>${allThreads[i]['title']}</strong></h1>
                                             <p>${allThreads[i]['body']}</p><br>
                                             <button class="button view-button">View</button>
                                         </div>
                                     `);
-
-
-
-
-
-
-
-                            }
+                           }
                         }
-                        
-                        
-                        
-                        
-                        
-                                }
-                        
-                        
-                        
-                        
-                    //     for (let c = 0; c < threads.length; c++){
-                    //         if(i ===threads[c]){
-                    //             // userThreads[userThreads.length] = allThreads[i]['title'];
-                    //             // userThreads.push(i);
-                    //             // console.log(allThreads[i]['title']);
-                    //             // console.log(allThreads[i]['body']);
-
-                    //             $favoriteFeed.append(`
-
-                    //                     <div class="box" id="${i}">
-                    //                         <h1 class="subtitle is-6"><strong>${allThreads[i]['title']}</strong></h1>
-                    //                         <p>${allThreads[i]['body']}</p><br>
-                    //                         <button class="button view-button">View</button>
-                    //                     </div>
-                    //                 `);
-
-
-
-
-
-
-
-                    //         }
-                    //     }
-                    //   }
-
-                    
-
-                    // console.log(typeof(threads[0]));
-                
-                    // for (let i = 0; i < allThreads.length; i++){
-                    //     for (let c = 0; c < threads.length; c++) {
-                    //         if(allThreads[i] == threads[i]){
-                    //             userThreads.push(threads[i]);
-                    //          }
-                    //     }
-                    //  }
-                     
-
-
-
-
-
-
+                    }
                 }).catch(function(error) {
                 alert(error + " hit when rendering saved feeds");
             });
-        
-
-
-
-
-
         }).catch(function(error) {
         alert(error + " hit when rendering commentFeed");
     });
@@ -486,101 +399,31 @@ export const renderAccount = async function() {
         headers: { Authorization: `Bearer ${jwt}`}
         }).then(function(response) {
             let threads = response.data.result;
-
-            
-
-
         url = 'http://localhost:3000/private/threads' ;
 
         let allThreads = axios.get(url, {
             headers: { Authorization: `Bearer ${jwt}`}
             }).then(function(response) {
                 let allThreads = response.data.result;
-           
-
-
                 for (let i in allThreads) {
                     for (let c in threads) {
-
-                        
-                        // console.log(threads[c]);
-                        if(i === c){
-                            // console.log(i);
-                            // userThreads[userThreads.length] = allThreads[i]['title'];
-                            // userThreads.push(i);
-                            // console.log(allThreads[i]['title']);
-                            // console.log(allThreads[i]['body']);
-
-                            $createdThreads.append(`
-
-                                    <div class="box" id="${i}">
-                                        <h1 class="subtitle is-6"><strong>${allThreads[i]['title']}</strong></h1>
-                                        <p>${allThreads[i]['body']}</p><br>
-                                        <button class="button view-button">View</button>
-                                    </div>
-                                `);
-
-
-
-
-
-
-
+                       if(i === c){
+                             $createdThreads.append(`
+                                <div class="box" id="${i}">
+                                    <h1 class="subtitle is-6"><strong>${allThreads[i]['title']}</strong></h1>
+                                    <p>${allThreads[i]['body']}</p><br>
+                                    <button class="button view-button">View</button>
+                                </div>
+                            `);
                         }
                     }
                 }
-
-            
-
-            // console.log(typeof(threads[0]));
-        
-            // for (let i = 0; i < allThreads.length; i++){
-            //     for (let c = 0; c < threads.length; c++) {
-            //         if(allThreads[i] == threads[i]){
-            //             userThreads.push(threads[i]);
-            //          }
-            //     }
-            //  }
-             
-
-
-
-
-
-
         }).catch(function(error) {
         alert(error + " hit when rendering saved feeds");
     });
-
-
 }).catch(function(error) {
     alert(error + " hit when rendering saved feeds");
 });
-
-
-
-
-
-
-   
-
-    // let IDs = [];
-    // for(let i in threads) {
-    //     IDs.push(i);
-    // }
-    
-    //let replyIDs = IDs.filter(reply => threads[reply]['parentID'] == parentID);
-    // for(let i = 0; i < userThreads.length; i++) {
-    //     $favoriteFeed.append(`
-    //         <div class="box">
-    //             <h1 class="subtitle is-6"><strong>${threads[userThreads[i]]['title']}</strong></h1>
-    //             <p>${threads[userThreads[i]]['body']}</p>
-    //         </div>
-    //     `);
-    // } 
-
-    //TODO
-    //make render functions
 }
 
 export const renderSportsPage = function() {
@@ -633,8 +476,6 @@ export const loadGames = async function(id, leagueID) {
     let $gameID = $('#' + id);
     let url = 'https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php?id=' + leagueID;
     let result = await axios.get(url);
-
-    console.log(result);
 
     let games = result.data.events;
     
@@ -754,7 +595,6 @@ export const handleReplySendButtonEvent = async function(event) {
             headers: { Authorization: `Bearer ${jwt}`}
     }).then(function(response) {
         renderPost();
-        //TODO: maybe make it so it doesn't reload at the top of the page
     }).catch(function(error) {
         alert(error.response.data['msg']);
     });
@@ -787,7 +627,6 @@ export const handleSendNewThreadButton = async function(event) {
         event.preventDefault();     
         renderPost();
 
-        //TODO...maybe: have the new post show up at the top of the threadFeed right after it is made...probably do with a helper function
     }).catch(function(error) {
         alert(error.response.data['msg']);
     });
@@ -808,8 +647,6 @@ export const handleSendNewThreadButton = async function(event) {
 }
 
 export const getTitles = async function(event) {
-    
-
     let url = 'http://localhost:3000/private/threads';
 
     let jwt = localStorage.getItem('jwt');
@@ -822,12 +659,8 @@ export const getTitles = async function(event) {
         titles = response.data.result;
         return titles;   
     }).catch(function(error) {
-        alert(error + " hit when loading titles");
-
-
-        
+        alert(error + " hit when loading titles");       
     });
-
         let titles = output;
         let counter = 0;
 
@@ -942,7 +775,7 @@ export const handleSubmitSearchButton = async function(event) {
         setTimeout(function() {
             const $warn = $('#searchWarning');
             $warn.empty();
-        }, 5000);
+        }, 3000);
 
     }).catch(function(error) {
         alert(error + " hit when searching");
@@ -1030,8 +863,6 @@ export const handleDeleteButtonEvent = function(event) {
 }
 
 $(async function() {
-
-
     if((localStorage.getItem('currentViewingID')).toString() != 'null'){
         renderPost();
     } else {
