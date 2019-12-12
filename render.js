@@ -263,7 +263,7 @@ export async function renderComments() {
     //TODO: add some HTML for when there are no comments
 }
 
-export const renderAccount = function() {
+export const renderAccountFeed = function() {
     const $root = $('#root');
     $root.empty();
 
@@ -289,7 +289,7 @@ export const renderAccount = function() {
             <div class="tile is-child box" style="background-color:#209CEE;">
                 <div>
                     <h1 class="title is-3" style="color:white;">Your Posts</h1>
-                    <div class="box">
+                    <div class="box" id="createdThreadsFeed">
                         <h3 class="title is-4">Post Title Placeholder</h3>
                         <h3 class="subtitle is-6"><strong>Sport Placeholder</strong></h5>
                         <button class="button view-button">View</button>
@@ -305,7 +305,7 @@ export const renderAccount = function() {
             <div class="tile is-child box" style="background-color:#209CEE;">
                 <div>
                     <h1 class="title is-3" style="color:white;">Favorite Posts</h1>
-                    <div class="box">
+                    <div class="box" id="SavedThreadsFeed">
                         <h3 class="title is-4">Post Title Placeholder</h3>
                         <h3 class="subtitle is-6">Author Name Placeholder &emsp; <strong>Sport Placeholder</strong></h5>
                         <button class="button view-button">View</button>
@@ -316,6 +316,69 @@ export const renderAccount = function() {
         </div>
     </section>
     `);
+}
+
+export const renderAccount = async function() {
+   
+    renderAccountFeed();
+
+
+
+
+    const $favoriteFeed = $('#SavedThreadsFeed');
+    
+    let user = localStorage.getItem('loggedInUser');
+    let url = 'http://localhost:3000/user/savedThreads' ;
+    let jwt = localStorage.getItem('jwt');
+    // let parentID = localStorage.getItem('currentViewingID');
+    let userThreads;
+    let threads = axios.get(url, {
+        headers: { Authorization: `Bearer ${jwt}`}
+        }).then(function(response) {
+            // let threads = response.data.result;
+        
+        }).catch(function(error) {
+        alert(error + " hit when rendering commentFeed");
+    });
+
+    url = 'http://localhost:3000/private/threads' ;
+
+    let allThreads = axios.get(url, {
+        headers: { Authorization: `Bearer ${jwt}`}
+        }).then(function(response) {
+            // let allThreads = response.data.result;
+          
+        }).catch(function(error) {
+        alert(error + " hit when rendering saved feeds");
+    });
+
+    console.log(allThreads);
+    console.log(threads);
+
+    for (let i = 0; i < allThreads.length; i++){
+        for (let c = 0; c < threads.length; c++) {
+            if(allThreads[i] == threads[i]){
+                userThreads.push(threads[i]);
+             }
+        }
+     }
+     
+
+    // let IDs = [];
+    // for(let i in threads) {
+    //     IDs.push(i);
+    // }
+    
+    //let replyIDs = IDs.filter(reply => threads[reply]['parentID'] == parentID);
+     console.log("yee");
+    // for(let i = 0; i < userThreads.length; i++) {
+    //     $favoriteFeed.append(`
+    //         <div class="box">
+    //             <h1 class="subtitle is-6"><strong>${threads[userThreads[i]]['title']}</strong></h1>
+    //             <p>${threads[userThreads[i]]['body']}</p>
+    //         </div>
+    //     `);
+    // } 
 
     //TODO
     //make render functions
