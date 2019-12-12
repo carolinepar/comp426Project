@@ -10,9 +10,9 @@ export const renderSite = function() {
             </div>
         </div>
     </section>
-    <div class="field is-grouped">
-        <button class="button account-button" style="margin-left:2%; margin-top:15px;">Account</button>
-        <button class="button sports-button" style="margin-left:5px; margin-top:15px;">Sports</button>
+    <div class="field is-grouped has-addons" style="margin-top:15px">
+        <button class="button account-button" style="margin-left:2%;">Account</button>
+        <button class="button sports-button" style="margin-left:5px;">Upcoming Events</button>
     </div>
     <section class="section">
         <div class="box" style="background-color: #209CEE;">
@@ -207,7 +207,7 @@ export const renderPost = async function() {
     <section>
         <div class="field is-grouped" style="margin-left:4%; margin-top:15px;">
             <button class="button back-button">Back</button>
-            <button class="button favorite-button" style="margin-left:5px;" id="favoriteButton" type="button">&#10084</button>
+            <button class="button favorite-button" style="margin-left:5px;" id="favoriteButton">&#10084</button>
         </div>
         <br>
         <div id=${viewingID}>
@@ -251,7 +251,7 @@ export async function renderComments() {
             for(let i = 0; i < replyIDs.length; i++) {
                 $comments.append(`
                     <div class="box">
-                        <h1 class="subtitle is-6"><strong>${threads[replyIDs[i]]['author']}</strong></h1>
+                        <h1 class="subtitle is-6">${threads[replyIDs[i]]['author']}</h1>
                         <p>${threads[replyIDs[i]]['reply']}</p>
                     </div>
                 `);
@@ -262,7 +262,7 @@ export async function renderComments() {
     //TODO: add some HTML for when there are no comments
 }
 
-export const renderAccountFeed = function() {
+export const renderAccount = function() {
     const $root = $('#root');
     $root.empty();
 
@@ -288,7 +288,7 @@ export const renderAccountFeed = function() {
             <div class="tile is-child box" style="background-color:#209CEE;">
                 <div>
                     <h1 class="title is-3" style="color:white;">Your Posts</h1>
-                    <div class="box" id="createdThreadsFeed">
+                    <div class="box">
                         <h3 class="title is-4">Post Title Placeholder</h3>
                         <h3 class="subtitle is-6"><strong>Sport Placeholder</strong></h5>
                         <button class="button view-button">View</button>
@@ -304,7 +304,7 @@ export const renderAccountFeed = function() {
             <div class="tile is-child box" style="background-color:#209CEE;">
                 <div>
                     <h1 class="title is-3" style="color:white;">Favorite Posts</h1>
-                    <div class="box" id="SavedThreadsFeed">
+                    <div class="box">
                         <h3 class="title is-4">Post Title Placeholder</h3>
                         <h3 class="subtitle is-6">Author Name Placeholder &emsp; <strong>Sport Placeholder</strong></h5>
                         <button class="button view-button">View</button>
@@ -315,75 +315,12 @@ export const renderAccountFeed = function() {
         </div>
     </section>
     `);
-}
-
-export const renderAccount = async function() {
-   
-    renderAccountFeed();
-
-
-
-
-    const $favoriteFeed = $('#SavedThreadsFeed');
-    
-    let user = localStorage.getItem('loggedInUser');
-    let url = 'http://localhost:3000/user/savedThreads' ;
-    let jwt = localStorage.getItem('jwt');
-    // let parentID = localStorage.getItem('currentViewingID');
-    let userThreads;
-    let threads = axios.get(url, {
-        headers: { Authorization: `Bearer ${jwt}`}
-        }).then(function(response) {
-            // let threads = response.data.result;
-        
-        }).catch(function(error) {
-        alert(error + " hit when rendering commentFeed");
-    });
-
-    url = 'http://localhost:3000/private/threads' ;
-
-    let allThreads = axios.get(url, {
-        headers: { Authorization: `Bearer ${jwt}`}
-        }).then(function(response) {
-            // let allThreads = response.data.result;
-          
-        }).catch(function(error) {
-        alert(error + " hit when rendering saved feeds");
-    });
-
-    console.log(allThreads);
-    console.log(threads);
-
-    for (let i = 0; i < allThreads.length; i++){
-        for (let c = 0; c < threads.length; c++) {
-            if(allThreads[i] == threads[i]){
-                userThreads.push(threads[i]);
-             }
-        }
-     }
-     
-
-    // let IDs = [];
-    // for(let i in threads) {
-    //     IDs.push(i);
-    // }
-    
-    //let replyIDs = IDs.filter(reply => threads[reply]['parentID'] == parentID);
-     console.log("yee");
-    // for(let i = 0; i < userThreads.length; i++) {
-    //     $favoriteFeed.append(`
-    //         <div class="box">
-    //             <h1 class="subtitle is-6"><strong>${threads[userThreads[i]]['title']}</strong></h1>
-    //             <p>${threads[userThreads[i]]['body']}</p>
-    //         </div>
-    //     `);
-    // } 
 
     //TODO
     //make render functions
 }
 
-export const renderSportsPage = async function() {
+export const renderSportsPage = function() {
     const $root = $('#root');
     $root.empty();
 
@@ -392,14 +329,77 @@ export const renderSportsPage = async function() {
         <div class="hero-body">
             <div class="container">
                 <h1 class="title">426Sports</h1>
+                <h1 class="subtitle">Upcoming events</h1>
             </div>
         </div>
     </section>
+    <section>
+        <button class="button back-button" style="margin-left:4%; margin-top:15px;">Back</button>
+        <br>
+        <br>
+        <div style="margin-left: 4%; margin-top:15px; margin-right:4%">
+            <h1 class="is-4 title">NFL</h1>
+            <div class="box" id="nflGames">
+                
+            </div>
+        </div>
+        <br>
+        <div style="margin-left: 4%; margin-top:15px;">
+            <h1 class="is-4 title">NBA</h1>
+            <div class="box" style="margin-right:4%" id="nbaGames">
+            </div>
+        </div>
+        <br>
+        <div style="margin-left: 4%; margin-top:15px;">
+            <h1 class="is-4 title">NHL</h1>
+            <div class="box" style="margin-right:4%" id="nhlGames">
+            </div>
+        </div>
+        <br>
+    </section>
     `);
+    
+    loadGames('nflGames', 4391);
+    loadGames('nbaGames', 4387);
+    //loadGames('mlbGames', 4424);
+    loadGames('nhlGames', 4380);
+    //loadGames('ncaafGames', 4479);
+    
+    
 
-    let url = 'https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php?id=4391';
+    
+
+    
+}
+
+export const loadGames = async function(id, leagueID) {
+    let $gameID = $('#' + id);
+    let url = 'https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php?id=' + leagueID;
     let result = await axios.get(url);
+
     console.log(result);
+
+    let games = result.data.events;
+    
+    for(let i = 0; i < games.length; i++) {
+        let date = new Date(games[i]['dateEventLocal']);
+
+        let dates = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        
+        let day = dates[date.getDay()];
+        let month = date.getMonth()+1;
+        let numDay = date.getDate();
+
+        $gameID.append(`
+        <div class="gameTime">
+            <h3 class="subtitle is-6">${day} ${month}/${numDay}</h3>
+        </div>
+        <div>
+            <h3 class="title is-5">${games[i]['strAwayTeam']} @ ${games[i]['strHomeTeam']}</h3>
+        </div>
+        <br>
+        `);
+    }
 }
 
 export const handleViewButtonEvent = function(event) {
@@ -465,7 +465,7 @@ export const handleNewThreadButton = function(event) {
                         <textarea class="textarea" id="newPostBody" placeholder="Text"></textarea>
                     </div>
                 </div>
-                <button class="button send-new-thread-button" type="button">Send</button>
+                <button class="button send-new-thread-button">Send</button>
             </div>
         </div>
     </section>
@@ -524,46 +524,15 @@ export const handleSendNewThreadButton = function(event) {
         headers: { Authorization: `Bearer ${jwt}`}
     }).then(function(response) {
         //TODO: make it so a title, body are required
-    
         
-
-        let url = 'http://localhost:3000/user/createdThreads/';
-    
-        axios.post(url, {
-            'data': [postID],
-            'type':'merge'
-        },
-            {
-                headers: { Authorization: `Bearer ${jwt}`}
-        }).then(function(response) {
-            
-        }).catch(function(error) {
-            alert(error.response.data['msg']);
-        });
-         
-
-
-
-
-
-
-
-
-
-
-
+        
         localStorage.setItem('currentViewingID', postID);
-        
-
-        event.preventDefault();
-
         renderPost();
 
         //TODO...maybe: have the new post show up at the top of the threadFeed right after it is made...probably do with a helper function
     }).catch(function(error) {
         alert(error.response.data['msg']);
     });
-    event.preventDefault();
 }
 
 export const getTitles = async function(event) {
@@ -612,28 +581,6 @@ export const handleFavoriteButtonEvent = function(event) {
 
     //TODO
     //Update in the user datastore that this thread was favorited
-    
-    let postID = localStorage.getItem('currentViewingID');
-    let jwt = localStorage.getItem('jwt');
-    
-    let url = 'http://localhost:3000/user/savedThreads/';
-    
-    axios.post(url, {
-        'data': [postID],
-        'type':'merge'
-    },
-        {
-            headers: { Authorization: `Bearer ${jwt}`}
-    }).then(function(response) {
-        event.preventDefault();
-        
-    }).catch(function(error) {
-        alert(error.response.data['msg']);
-    });
-     
-
-
-
 }
 
 export const handleUnfavoriteButtonEvent = function(event) {
@@ -683,4 +630,3 @@ $(async function() {
     autocomplete(document.getElementById("searchThread"), titles);
 
 });
-
