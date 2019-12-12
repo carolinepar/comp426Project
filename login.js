@@ -57,6 +57,7 @@ function userLogin(event){
     console.log(responseValues[0]['jwt']);
     localStorage.setItem('jwt', responseValues[0]['jwt']);
     localStorage.setItem('loggedInUser', username);
+    localStorage.setItem('currentViewingID', null);
     
   })
   .catch(function(error) {
