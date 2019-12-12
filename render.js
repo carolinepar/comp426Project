@@ -11,7 +11,8 @@ export const renderSite = function() {
         </div>
     </section>
     <div class="field is-grouped has-addons" style="margin-top:15px">
-        <button class="button account-button" style="margin-left:2%;">Account</button>
+        <button class="button logout-button is-danger is-outlined" style="margin-left:2%;">Logout</button>
+        <button class="button account-button" style="margin-left:5px;">Account</button>
         <button class="button sports-button" style="margin-left:5px;">Upcoming Events</button>
     </div>
     <section class="section">
@@ -603,6 +604,15 @@ export const handleSportsButtonEvent = function(event) {
     renderSportsPage();
 }
 
+export const handleLogoutButtonEvent = function(event) {
+    event.preventDefault();
+
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('loggedInUser');
+
+    window.location.replace("index.html");
+}
+
 $(async function() {
     renderSite();
 
@@ -625,6 +635,8 @@ $(async function() {
     $root.on('click', '.unfavorite-button', handleUnfavoriteButtonEvent);
 
     $root.on('click', '.sports-button', handleSportsButtonEvent);
+
+    $root.on('click', '.logout-button', handleLogoutButtonEvent);
 
     let titles  = await getTitles();
     autocomplete(document.getElementById("searchThread"), titles);
