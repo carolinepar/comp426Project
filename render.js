@@ -58,7 +58,7 @@ export async function renderFeed() {
                 `);
             }        
         }).catch(function(error) {
-        alert(error + " hit when rendering threadFeed");
+        console.log(error + " hit when rendering threadFeed");
     });  
 }
 
@@ -202,7 +202,7 @@ console.log(viewingID);
             let currentPost = response.data.result[viewingID]
             return currentPost;       
         }).catch(function(error) {
-        alert(error + " hit when rendering post");
+            console.log(error + " hit when rendering post");
     });
 
     $root.append(`
@@ -296,7 +296,7 @@ export async function renderComments() {
                 `);
             } 
         }).catch(function(error) {
-        alert(error + " hit when rendering commentFeed");
+            console.log(error + " hit when rendering commentFeed");
     });
 }
 
@@ -358,15 +358,24 @@ export const renderAccount = async function() {
         headers: { Authorization: `Bearer ${jwt}`}
         }).then(function(response) {
             let threads = response.data.result;
+            console.log(Object.keys(threads).length === 0 && threads.constructor === Object);
 
-            
+console.log(threads);
+
+            if(Object.keys(threads).length === 0 && threads.constructor === Object){
+                $favoriteFeed.empty();
+                $favoriteFeed.append(`
+                <h1 class="subtitle is-6"><strong>You haven't liked any posts</strong></h1>
+                `);
+            }else{
         
-
+                $favoriteFeed.empty();
             url = 'http://localhost:3000/private/threads' ;
 
             let allThreads = axios.get(url, {
                 headers: { Authorization: `Bearer ${jwt}`}
                 }).then(function(response) {
+
                     let allThreads = response.data.result;
                     let userThreads;
                     let userTitles;
@@ -385,10 +394,12 @@ export const renderAccount = async function() {
                         }
                     }
                 }).catch(function(error) {
-                alert(error + " hit when rendering saved feeds");
-            });
+
+                    console.log(error + " hit when rendering saved feeds");
+            });}
+
         }).catch(function(error) {
-        alert(error + " hit when rendering commentFeed");
+            console.log(error + " hit when rendering commentFeed");
     });
 
     const $createdThreads = $('#createdThreadsFeed');
@@ -399,6 +410,18 @@ export const renderAccount = async function() {
         headers: { Authorization: `Bearer ${jwt}`}
         }).then(function(response) {
             let threads = response.data.result;
+
+
+            if (Object.keys(threads).length === 0 && threads.constructor === Object){
+
+                $createdThreads.empty();
+                $createdThreads.append(`
+                <h1 class="subtitle is-6"><strong>You haven't made any posts</strong></h1>
+                `);
+            } else {
+
+                $createdThreads.empty();
+
         url = 'http://localhost:3000/private/threads' ;
 
         let allThreads = axios.get(url, {
@@ -419,10 +442,12 @@ export const renderAccount = async function() {
                     }
                 }
         }).catch(function(error) {
-        alert(error + " hit when rendering saved feeds");
-    });
+
+            console.log(error + " hit when rendering saved feeds");
+    });};
+
 }).catch(function(error) {
-    alert(error + " hit when rendering saved feeds");
+    console.log(error + " hit when rendering saved feeds");
 });
 }
 
@@ -512,7 +537,6 @@ export const handleBackButtonEvent = function(event) {
     localStorage.setItem('currentViewingID', null);
 
     window.location.replace("home.html");
-    //renderSite();
 }
 
 export const handleAccountButtonEvent = function(event) {
@@ -596,7 +620,7 @@ export const handleReplySendButtonEvent = async function(event) {
     }).then(function(response) {
         renderPost();
     }).catch(function(error) {
-        alert(error.response.data['msg']);
+        console.log(error.response.data['msg']);
     });
 }
 
@@ -628,7 +652,7 @@ export const handleSendNewThreadButton = async function(event) {
         renderPost();
 
     }).catch(function(error) {
-        alert(error.response.data['msg']);
+        console.log(error.response.data['msg']);
     });
 
     url = 'http://localhost:3000/user/myPosts/' + postID;
@@ -659,7 +683,8 @@ export const getTitles = async function(event) {
         titles = response.data.result;
         return titles;   
     }).catch(function(error) {
-        alert(error + " hit when loading titles");       
+        console.log(error + " hit when loading titles");       
+
     });
         let titles = output;
         let counter = 0;
@@ -698,7 +723,7 @@ export const handleFavoriteButtonEvent = async function(event) {
     }).then(function(response) {
         console.log("thread saved");
     }).catch(function(error) {
-        alert(error + " when saving thread");
+        console(error + " when saving thread");
     });
 }
 
@@ -778,7 +803,7 @@ export const handleSubmitSearchButton = async function(event) {
         }, 3000);
 
     }).catch(function(error) {
-        alert(error + " hit when searching");
+        console.log(error + " hit when searching");
     });
 }
 
