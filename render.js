@@ -17,14 +17,11 @@ export const renderSite = function() {
     <section class="section">
         <div class="box" style="background-color: #209CEE;">
             <h1 class="title" style="color:white; display:inline-block;">Threads</h1><button class="button is-rounded is-light new-thread-button" style="float:right">Post New Thread</button>
-            <div>
-                <form autocomplete="off">
-                    <div class="control search">
-                        <input class="input" type="text" placeholder="Search threads" name="mySearch" id="searchThread">
-                    </div> 
-                    <br>
-                    <button class="button is-rounded is-light" type="button" id="submitSearch">Submit</button>
-                </form>
+            <div class="field has-addons search" style="width:100%;"> 
+                <input class="input" type="text" placeholder="Search threads" name="mySearch" id="searchThread">
+                <div class="control">
+                    <button class="button is-rounded" id="submitSearch">Submit</button>
+                </div>
             </div>
             <br>
             <div id="threadFeed">
